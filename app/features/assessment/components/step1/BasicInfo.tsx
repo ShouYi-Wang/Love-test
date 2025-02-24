@@ -22,6 +22,17 @@ const assessmentPurposes = [
   { value: 'improveMarriage', label: '婚姻关系改善' }
 ];
 
+interface FormEvent extends React.FormEvent {
+  target: HTMLFormElement;
+}
+
+interface SelectEvent extends React.ChangeEvent<HTMLSelectElement> {
+  target: {
+    name: string;
+    value: string;
+  };
+}
+
 export default function BasicInfoStep() {
   const { state, dispatch } = useAssessment();
   const [formData, setFormData] = useState<Partial<BasicInfo>>(state.formData.basicInfo);
@@ -41,7 +52,8 @@ export default function BasicInfoStep() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
     if (validateForm()) {
       dispatch({ type: 'UPDATE_BASIC_INFO', payload: formData });
       dispatch({ 
@@ -53,6 +65,11 @@ export default function BasicInfoStep() {
       });
       dispatch({ type: 'SET_STEP', payload: 2 });
     }
+  };
+
+  const handleSelect = (e: SelectEvent) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
@@ -150,7 +167,8 @@ export default function BasicInfoStep() {
           <label className="block text-sm font-medium text-gray-700">教育背景</label>
           <select
             value={formData.education || ''}
-            onChange={(e) => setFormData({ ...formData, education: e.target.value })}
+            onChange={handleSelect}
+            name="education"
             className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
           >
             <option value="">请选择</option>

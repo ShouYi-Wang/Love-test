@@ -13,8 +13,16 @@ import ReportPreview from './ReportPreview';
 import AnimatedScore from '../common/AnimatedScore';
 import { useRouter } from 'next/navigation';
 
+// 添加具体的 formData 类型
+interface FormData {
+  // 添加你的表单字段类型
+  name: string;
+  age: number;
+  // ...其他字段
+}
+
 // 模拟AI分析结果生成
-function generateResults(formData: any): AssessmentResult {
+function generateResults(formData: FormData): AssessmentResult {
   // 这里应该是复杂的AI分析逻辑
   // 目前使用模拟数据
   return {
@@ -88,13 +96,13 @@ export default function AssessmentResultStep() {
 
   useEffect(() => {
     generateAssessmentResults();
-  }, []);
+  }, [generateAssessmentResults]);
 
   useEffect(() => {
     if (!loading && result) {
       clearStorage();
     }
-  }, [loading, result]);
+  }, [loading, result, clearStorage]);
 
   const handleShare = async () => {
     try {

@@ -39,4 +39,16 @@ declare module 'jspdf-autotable' {
     body?: any[][];
     theme?: string;
   }
+}
+
+interface TableRow {
+  [key: string]: string | number;
+}
+
+interface AutoTableOptions {
+  startY?: number;
+  head?: TableRow[][];
+  body?: TableRow[][];
+  theme?: string;
+  finalY?: number;
 } 

@@ -10,7 +10,7 @@ interface ReportPreviewProps {
 
 export default function ReportPreview({ result, onClose }: ReportPreviewProps) {
   const scoreLevel = Object.entries(SCORE_LEVELS)
-    .find(([_, { min }]) => result.overallScore >= min)?.[1]?.label || SCORE_LEVELS.POOR.label;
+    .find(([, { min }]) => result.overallScore >= min)?.[1]?.label || SCORE_LEVELS.POOR.label;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

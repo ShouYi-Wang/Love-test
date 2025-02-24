@@ -28,19 +28,28 @@ export async function generatePDF(result: AssessmentResult) {
     `${score}分`
   ]);
   
-  const table = (doc as any).autoTable({
-    startY: currentY,
-    head: [['维度', '得分']],
-    body: dimensionData,
-    theme: 'grid'
-  });
+  // 添加类型定义
+  interface AutoTableOptions {
+    startY: number;
+    head: string[][];
+    body: string[][];
+    theme: string;
+  }
+
+  const table = (doc as unknown as { autoTable: (options: AutoTableOptions) => { finalY: number } })
+    .autoTable({
+      startY: currentY,
+      head: [['维度', '得分']],
+      body: dimensionData,
+      theme: 'grid'
+    });
   
   currentY = (table?.finalY || currentY) + 20;
 
   // 优势领域
   doc.setFontSize(16);
   doc.text('优势领域', 20, currentY);
-  result.strengthAreas.forEach((strength, index) => {
+  result.strengthAreas.forEach((strength) => {
     currentY += 10;
     doc.setFontSize(12);
     doc.text(`• ${strength}`, 25, currentY);

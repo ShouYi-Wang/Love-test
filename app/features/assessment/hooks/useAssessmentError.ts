@@ -4,12 +4,16 @@ import { useState } from 'react';
 import { ErrorReportingService } from '../services/errorReporting';
 import { useAssessment } from '../context/AssessmentContext';
 
+interface ErrorContext {
+  [key: string]: string | number | boolean;
+}
+
 export function useAssessmentError() {
   const [error, setError] = useState<string | null>(null);
   const { state } = useAssessment();
   const errorService = ErrorReportingService.getInstance();
 
-  const handleError = async (err: Error, context?: Record<string, any>) => {
+  const handleError = async (err: Error, context?: ErrorContext) => {
     setError(err.message);
     
     // 添加用户当前状态到上报信息
