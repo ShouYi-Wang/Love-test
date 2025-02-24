@@ -31,10 +31,6 @@ const assessmentPurposes = [
   { value: 'improveMarriage' as AssessmentPurpose, label: '婚姻关系改善' }
 ];
 
-interface FormEvent extends React.FormEvent {
-  target: HTMLFormElement;
-}
-
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean;
   children: React.ReactNode;
@@ -64,7 +60,7 @@ export default function BasicInfoStep() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (validateForm()) {
       dispatch({ type: 'UPDATE_BASIC_INFO', payload: formData });
