@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback, memo } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
 import { AssessmentResult } from '../../types';
 import { useAssessmentStorage } from '../../hooks/useAssessmentStorage';
 import { shareResults } from '../../utils/share';
 import NextSteps from './NextSteps';
-import { useAssessmentError } from '../../hooks/useAssessmentError';
 import RetryButton from '../common/RetryButton';
 import { generatePDF } from '../../utils/pdfGenerator';
 import ReportPreview from './ReportPreview';
