@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
-import { AssessmentResult, BasicInfo, PersonalityTraits, PartnerPreference } from '../../types';
+import { AssessmentResult } from '../../types';
 import { useAssessmentStorage } from '../../hooks/useAssessmentStorage';
 import { shareResults } from '../../utils/share';
 import NextSteps from './NextSteps';
@@ -56,7 +56,7 @@ function generateResults(): AssessmentResult {
 }
 
 export default function AssessmentResultStep() {
-  const { state, dispatch } = useAssessment();
+  const { dispatch } = useAssessment();
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState<AssessmentResult | null>(null);
   const { error, handleError, clearError } = useAssessmentError();

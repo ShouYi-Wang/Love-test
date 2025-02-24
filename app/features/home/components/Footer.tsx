@@ -1,5 +1,11 @@
 'use client';
 
+interface SocialIcon {
+  name: string;
+  href: string;
+  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+}
+
 const navigation = {
   main: [
     { name: '关于我们', href: '/about' },
@@ -11,21 +17,15 @@ const navigation = {
     {
       name: '微信',
       href: '#',
-      icon: (props: any) => (
+      icon: (props: React.SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path d="M8.04 4.86c.22 0 .42 0 .62.02 4.28 0 7.76 3.48 7.76 7.76 0 4.28-3.48 7.76-7.76 7.76-4.28 0-7.76-3.48-7.76-7.76 0-4.28 3.48-7.76 7.76-7.76.22-.02.42-.02.62-.02z" />
         </svg>
       ),
     },
     // 添加其他社交媒体图标
-  ],
+  ] as SocialIcon[],
 };
-
-interface FooterProps {
-  className?: string;
-  style?: React.CSSProperties;
-  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
-}
 
 export default function Footer() {
   return (

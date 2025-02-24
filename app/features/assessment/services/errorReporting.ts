@@ -16,7 +16,7 @@ interface ErrorReport {
     step: number;
     progress: number[];
   };
-  context?: Record<string, any>;
+  context?: ErrorContext;
 }
 
 export class ErrorReportingService {
