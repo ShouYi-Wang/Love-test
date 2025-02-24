@@ -64,10 +64,19 @@ export interface AssessmentResult {
   };
 }
 
+export interface BasicInfoFormData {
+  ageRange: typeof ageRanges[number];
+  gender: 'male' | 'female' | 'other';
+  occupation: (typeof occupations[number])[];
+  education: typeof educationLevels[number];
+  relationshipStatus: 'single' | 'dating' | 'married';
+  assessmentPurpose: 'findPartner' | 'evaluateRelation' | 'premaritalAssessment' | 'improveMarriage';
+}
+
 export interface AssessmentState {
   currentStep: number;
   formData: {
-    basicInfo: Partial<BasicInfo>;
+    basicInfo: Partial<BasicInfoFormData>;
     personalityTraits: Partial<PersonalityTraits>;
     partnerPreference: Partial<PartnerPreference>;
   };

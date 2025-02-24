@@ -2,6 +2,7 @@
 
 import { useState, useCallback, memo } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
+import { BasicInfoFormData } from '../../types';
 
 // 将常量配置移到单独的文件
 import { 
@@ -19,15 +20,6 @@ type RelationshipStatus = 'single' | 'dating' | 'married';
 type AssessmentPurpose = 'findPartner' | 'evaluateRelation' | 'premaritalAssessment' | 'improveMarriage';
 type Education = typeof educationLevels[number];
 type Occupation = typeof occupations[number];
-
-interface BasicInfoFormData {
-  ageRange: AgeRange;
-  gender: Gender;
-  occupation: Occupation[];
-  education: Education;
-  relationshipStatus: RelationshipStatus;
-  assessmentPurpose: AssessmentPurpose;
-}
 
 interface SelectButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
   selected?: boolean;
@@ -53,9 +45,10 @@ SelectButton.displayName = 'SelectButton';
 
 export default function BasicInfoStep() {
   const { state, dispatch } = useAssessment();
-  const [formData, setFormData] = useState<Partial<BasicInfoFormData>>(() => 
-    state.formData.basicInfo
-  );
+  const [formData, setFormData] = useState<Partial<BasicInfoFormData>>(() => ({
+    ...state.formData.basicInfo,
+    ageRange: state.formData.basicInfo.ageRange as BasicInfoFormData['ageRange']
+  }));
   const [errors, setErrors] = useState<Partial<Record<keyof BasicInfoFormData, string>>>({});
 
   const validateForm = useCallback((): boolean => {

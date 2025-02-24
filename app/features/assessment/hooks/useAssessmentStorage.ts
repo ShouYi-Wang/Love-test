@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useAssessment } from '../context/AssessmentContext';
+import { BasicInfoFormData } from '../types';
 
 const STORAGE_KEY = 'assessment_progress';
 
@@ -10,34 +11,29 @@ export function useAssessmentStorage() {
 
   // 从localStorage恢复状态
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
+    try {
+      const stored = localStorage.getItem('assessment_state');
+      if (stored) {
         const data = JSON.parse(stored);
         // 确保恢复的数据符合类型要求
         const restoredState = {
           ...state,
           ...data,
           formData: {
-            basicInfo: data.formData?.basicInfo || {},
-            personalityTraits: {
-              mbtiResult: data.formData?.personalityTraits?.mbtiResult || {},
-              bigFiveResult: data.formData?.personalityTraits?.bigFiveResult || {},
-              emotionalExpression: data.formData?.personalityTraits?.emotionalExpression || [],
-              lifestyle: {
-                schedule: data.formData?.personalityTraits?.lifestyle?.schedule || '',
-                preferences: data.formData?.personalityTraits?.lifestyle?.preferences || []
-              }
+            basicInfo: {
+              ...data.formData?.basicInfo,
+              ageRange: data.formData?.basicInfo?.ageRange as BasicInfoFormData['ageRange']
             },
+            personalityTraits: data.formData?.personalityTraits || {},
             partnerPreference: data.formData?.partnerPreference || {}
           }
         };
         dispatch({ type: 'RESTORE_STATE', payload: restoredState });
-      } catch (e) {
-        console.error('Failed to restore assessment state:', e);
       }
+    } catch (e) {
+      console.error('Failed to restore assessment state:', e);
     }
-  }, [dispatch]);
+  }, [dispatch, state]);
 
   // 保存状态到localStorage
   useEffect(() => {
