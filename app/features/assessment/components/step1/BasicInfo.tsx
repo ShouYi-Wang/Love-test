@@ -35,13 +35,6 @@ interface FormEvent extends React.FormEvent {
   target: HTMLFormElement;
 }
 
-interface ChangeEvent extends React.ChangeEvent<HTMLSelectElement | HTMLInputElement> {
-  target: {
-    name: string;
-    value: string;
-  };
-}
-
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean;
   children: React.ReactNode;
@@ -66,7 +59,7 @@ export default function BasicInfoStep() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: ChangeEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
