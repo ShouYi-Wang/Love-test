@@ -5,10 +5,10 @@ export interface PersonalityTraits {
   bigFiveResult: {
     [key: string]: number;
   };
-  emotionalExpression?: string[];
-  lifestyle?: {
-    schedule?: string;
-    preferences?: string[];
+  emotionalExpression: string[];
+  lifestyle: {
+    schedule: string;
+    preferences: string[];
   };
 }
 

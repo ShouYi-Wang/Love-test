@@ -73,7 +73,13 @@ const conflictResolutionOptions = [
 export default function PartnerPreferenceStep() {
   const { state, dispatch } = useAssessment();
   const [formData, setFormData] = useState<Partial<PartnerPreference>>(
-    state.formData.partnerPreference
+    state.formData.partnerPreference || {
+      idealTraits: {
+        personality: [],
+        lifestyle: [],
+        values: []
+      }
+    }
   );
   const [currentSection, setCurrentSection] = useState(1); // 1: 理想特质, 2: 关系期待, 3: 可接受度
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -141,6 +147,26 @@ export default function PartnerPreferenceStep() {
     }
   };
 
+  const handleTraitSelection = (
+    category: 'personality' | 'lifestyle' | 'values',
+    trait: string
+  ) => {
+    const currentTraits = formData.idealTraits?.[category] || [];
+    const updatedTraits = currentTraits.includes(trait)
+      ? currentTraits.filter(t => t !== trait)
+      : [...currentTraits, trait];
+
+    setFormData({
+      ...formData,
+      idealTraits: {
+        personality: formData.idealTraits?.personality || [],
+        lifestyle: formData.idealTraits?.lifestyle || [],
+        values: formData.idealTraits?.values || [],
+        [category]: updatedTraits
+      }
+    });
+  };
+
   const renderIdealTraitsSection = () => (
     <div className="space-y-6">
       <h3 className="text-xl font-semibold text-gray-900">理想伴侣特质</h3>
@@ -155,19 +181,7 @@ export default function PartnerPreferenceStep() {
             <button
               key={trait}
               type="button"
-              onClick={() => {
-                const current = formData.idealTraits?.personality || [];
-                const updated = current.includes(trait)
-                  ? current.filter(t => t !== trait)
-                  : [...current, trait];
-                setFormData({
-                  ...formData,
-                  idealTraits: {
-                    ...formData.idealTraits,
-                    personality: updated
-                  }
-                });
-              }}
+              onClick={() => handleTraitSelection('personality', trait)}
               className={`p-2 text-sm rounded-md border ${
                 formData.idealTraits?.personality?.includes(trait)
                   ? 'border-primary bg-primary-50 text-primary'
@@ -193,19 +207,7 @@ export default function PartnerPreferenceStep() {
             <button
               key={style}
               type="button"
-              onClick={() => {
-                const current = formData.idealTraits?.lifestyle || [];
-                const updated = current.includes(style)
-                  ? current.filter(s => s !== style)
-                  : [...current, style];
-                setFormData({
-                  ...formData,
-                  idealTraits: {
-                    ...formData.idealTraits,
-                    lifestyle: updated
-                  }
-                });
-              }}
+              onClick={() => handleTraitSelection('lifestyle', style)}
               className={`p-2 text-sm rounded-md border ${
                 formData.idealTraits?.lifestyle?.includes(style)
                   ? 'border-primary bg-primary-50 text-primary'
@@ -231,19 +233,7 @@ export default function PartnerPreferenceStep() {
             <button
               key={value}
               type="button"
-              onClick={() => {
-                const current = formData.idealTraits?.values || [];
-                const updated = current.includes(value)
-                  ? current.filter(v => v !== value)
-                  : [...current, value];
-                setFormData({
-                  ...formData,
-                  idealTraits: {
-                    ...formData.idealTraits,
-                    values: updated
-                  }
-                });
-              }}
+              onClick={() => handleTraitSelection('values', value)}
               className={`p-2 text-sm rounded-md border ${
                 formData.idealTraits?.values?.includes(value)
                   ? 'border-primary bg-primary-50 text-primary'

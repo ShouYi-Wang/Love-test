@@ -15,14 +15,40 @@ const initialState: AssessmentState = {
     personalityTraits: {
       mbtiResult: {},
       bigFiveResult: {},
+      emotionalExpression: [],
+      lifestyle: {
+        schedule: '',
+        preferences: []
+      }
     },
-    partnerPreference: {},
+    partnerPreference: {
+      idealTraits: {
+        personality: [],
+        lifestyle: [],
+        values: []
+      },
+      relationshipExpectation: {
+        commitment: 0,
+        futurePlanning: [],
+        growthMindset: 0
+      },
+      acceptanceLevel: {
+        toleranceScore: 0,
+        conflictResolution: [],
+        compromiseWillingness: 0
+      },
+      priorities: {
+        dimensionWeights: {},
+        coreRequirements: [],
+        flexibilityLevel: 0
+      }
+    }
   },
   progress: {
     stepProgress: [0, 0, 0, 0],
-    currentStepCompletion: 0,
+    currentStepCompletion: 0
   },
-  results: null,
+  results: null
 };
 
 // Action 类型
