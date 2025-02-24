@@ -59,45 +59,46 @@ export default function AssessmentResultStep() {
   const [showPreview, setShowPreview] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const generateAssessmentResults = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  // 将函数提取到组件作用域
+  const generateAssessmentResults = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        // 模拟API调用延迟
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        const results = await generateResults();
-        
-        // 使用类型守卫验证结果
-        if (!isAssessmentResult(results)) {
-          throw new Error('Invalid assessment results format');
-        }
-
-        setResult(results);
-        dispatch({ type: 'SET_RESULTS', payload: results });
-        dispatch({
-          type: 'UPDATE_PROGRESS',
-          payload: {
-            stepProgress: [100, 100, 100, 100],
-            currentStepCompletion: 100
-          }
-        });
-      } catch (e) {
-        setError(e instanceof Error ? e.message : '生成评估结果时出错');
-      } finally {
-        setLoading(false);
+      // 模拟API调用延迟
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const results = await generateResults();
+      
+      // 使用类型守卫验证结果
+      if (!isAssessmentResult(results)) {
+        throw new Error('Invalid assessment results format');
       }
-    };
 
+      setResult(results);
+      dispatch({ type: 'SET_RESULTS', payload: results });
+      dispatch({
+        type: 'UPDATE_PROGRESS',
+        payload: {
+          stepProgress: [100, 100, 100, 100],
+          currentStepCompletion: 100
+        }
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '生成评估结果时出错');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (!state.results) {
       void generateAssessmentResults();
     } else {
       setResult(state.results);
       setLoading(false);
     }
-  }, [state.results, dispatch]);
+  }, [state.results]);  // 移除 dispatch 依赖，因为它是稳定的
 
   useEffect(() => {
     if (!loading && result) {
