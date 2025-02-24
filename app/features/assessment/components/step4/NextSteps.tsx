@@ -1,6 +1,10 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 export default function NextSteps() {
+  const router = useRouter();
+
   return (
     <div className="mt-12 border-t pt-8">
       <h3 className="text-xl font-semibold text-gray-900">后续服务</h3>
@@ -12,10 +16,10 @@ export default function NextSteps() {
           </p>
           <button
             type="button"
-            onClick={() => window.location.href = '/advisor'}
+            onClick={() => router.push('/advisor')}
             className="mt-4 text-primary hover:text-primary-dark"
           >
-            立即咨询 →
+            开始咨询 →
           </button>
         </div>
         <div className="p-6 bg-gray-50 rounded-lg">
@@ -25,7 +29,7 @@ export default function NextSteps() {
           </p>
           <button
             type="button"
-            onClick={() => window.location.href = '/community'}
+            onClick={() => router.push('/community')}
             className="mt-4 text-primary hover:text-primary-dark"
           >
             加入社区 →

@@ -1,6 +1,6 @@
-import { jsPDF as JsPDF } from "jspdf";
+import { jsPDF } from "jspdf";
 
-export function addWatermark(doc: JsPDF) {
+export function addWatermark(doc: jsPDF): void {
   const watermarkText = 'AI情感顾问 - 仅供参考';
   const pages = doc.getNumberOfPages();
   
@@ -11,14 +11,20 @@ export function addWatermark(doc: JsPDF) {
     doc.setPage(i);
     
     // 添加对角线水印
-    doc.save();
-    doc.rotate(45, doc.internal.pageSize.width / 2, doc.internal.pageSize.height / 2);
-    doc.text(
-      watermarkText,
-      doc.internal.pageSize.width / 2,
-      doc.internal.pageSize.height / 2,
-      { align: 'center' }
-    );
-    doc.restore();
+    const x = doc.internal.pageSize.width / 2;
+    const y = doc.internal.pageSize.height / 2;
+    
+    // 保存当前状态
+    (doc as unknown as { save(): void }).save();
+    
+    // 旋转
+    (doc as unknown as { rotate(angle: number, x: number, y: number): void })
+      .rotate(45, x, y);
+    
+    // 添加文本
+    doc.text(watermarkText, x, y, { align: 'center' });
+    
+    // 恢复状态
+    (doc as unknown as { restore(): void }).restore();
   }
 } 

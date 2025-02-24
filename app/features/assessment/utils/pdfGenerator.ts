@@ -1,11 +1,49 @@
-import { jsPDF as JsPDF } from "jspdf";
+import dynamic from 'next/dynamic';
 import 'jspdf-autotable';
 import { AssessmentResult } from '../types';
 import { DIMENSION_LABELS, SCORE_LEVELS } from '../constants';
 import { addWatermark } from './watermark';
 
-export async function generatePDF(result: AssessmentResult) {
-  const doc = new JsPDF();
+interface AutoTableOptions {
+  startY: number;
+  head: string[][];
+  body: string[][];
+  theme: string;
+}
+
+// 动态导入 jsPDF
+const jsPDF = dynamic(() => import('jspdf').then(mod => mod.jsPDF), {
+  ssr: false
+});
+
+export async function generatePDF(result: AssessmentResult): Promise<jsPDF> {
+  try {
+    const doc = new jsPDF();
+    
+    // 添加错误处理和重试逻辑
+    const maxRetries = 3;
+    let retries = 0;
+    
+    while (retries < maxRetries) {
+      try {
+        await addContent(doc, result);
+        break;
+      } catch (err) {
+        retries++;
+        if (retries === maxRetries) throw err;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+    
+    return doc;
+  } catch (err) {
+    console.error('PDF generation failed:', err);
+    throw new Error('生成PDF报告失败，请稍后重试');
+  }
+}
+
+// 分离内容生成逻辑
+async function addContent(doc: jsPDF, result: AssessmentResult): Promise<void> {
   let currentY = 80;
   
   // 添加标题
@@ -28,14 +66,6 @@ export async function generatePDF(result: AssessmentResult) {
     `${score}分`
   ]);
   
-  // 添加类型定义
-  interface AutoTableOptions {
-    startY: number;
-    head: string[][];
-    body: string[][];
-    theme: string;
-  }
-
   const table = (doc as unknown as { autoTable: (options: AutoTableOptions) => { finalY: number } })
     .autoTable({
       startY: currentY,
@@ -118,6 +148,4 @@ export async function generatePDF(result: AssessmentResult) {
 
   // 添加水印
   addWatermark(doc);
-
-  return doc;
 } 

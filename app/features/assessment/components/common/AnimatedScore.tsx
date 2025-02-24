@@ -15,13 +15,10 @@ export default function AnimatedScore({ value, duration = 2000 }: AnimatedScoreP
     const increment = value / steps;
     const stepDuration = duration / steps;
     let current = 0;
-    let step = 0;
 
     const interval = setInterval(() => {
       current += increment;
-      step += 1;
-      
-      if (step >= steps) {
+      if (current >= value) {
         setDisplayValue(value);
         clearInterval(interval);
       } else {

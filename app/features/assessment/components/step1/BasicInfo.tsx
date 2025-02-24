@@ -1,48 +1,66 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
 import { BasicInfo } from '../../types';
 
+// 将常量配置移到单独的文件
+import { 
+  ageRanges, 
+  occupations,
+  educationLevels,
+  genderOptions,
+  relationshipStatuses,
+  assessmentPurposes 
+} from '../../constants/basicInfo';
+
+type AgeRange = typeof ageRanges[number];
 type Gender = 'male' | 'female' | 'other';
 type RelationshipStatus = 'single' | 'dating' | 'married';
 type AssessmentPurpose = 'findPartner' | 'evaluateRelation' | 'premaritalAssessment' | 'improveMarriage';
+type Education = typeof educationLevels[number];
+type Occupation = typeof occupations[number];
 
-const ageRanges = ['18-24', '25-30', '31-35', '36-40', '40+'] as const;
-const occupations = [
-  '技术/IT', '金融/投资', '医疗/健康', '教育/培训',
-  '销售/市场', '艺术/设计', '学生', '其他'
-];
-const educationLevels = ['高中及以下', '大专', '本科', '硕士', '博士'];
-const genderOptions = [
-  { value: 'male' as Gender, label: '男' },
-  { value: 'female' as Gender, label: '女' },
-  { value: 'other' as Gender, label: '其他' }
-];
-const relationshipStatuses = [
-  { value: 'single' as RelationshipStatus, label: '单身' },
-  { value: 'dating' as RelationshipStatus, label: '恋爱中' },
-  { value: 'married' as RelationshipStatus, label: '已婚' }
-];
-const assessmentPurposes = [
-  { value: 'findPartner' as AssessmentPurpose, label: '寻找潜在伴侣' },
-  { value: 'evaluateRelation' as AssessmentPurpose, label: '评估当前关系' },
-  { value: 'premaritalAssessment' as AssessmentPurpose, label: '婚前评估' },
-  { value: 'improveMarriage' as AssessmentPurpose, label: '婚姻关系改善' }
-];
+interface BasicInfoFormData {
+  ageRange: AgeRange;
+  gender: Gender;
+  occupation: Occupation[];
+  education: Education;
+  relationshipStatus: RelationshipStatus;
+  assessmentPurpose: AssessmentPurpose;
+}
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface SelectButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
   selected?: boolean;
   children: React.ReactNode;
 }
 
+// 将 SelectButton 组件提取出来
+const SelectButton = memo(({ selected, children, ...props }: SelectButtonProps) => (
+  <button
+    type="button"
+    className={`px-4 py-2 text-sm rounded-md border ${
+      selected
+        ? 'border-primary bg-primary text-white'
+        : 'border-gray-300 hover:border-primary'
+    }`}
+    {...props}
+  >
+    {children}
+  </button>
+));
+
+SelectButton.displayName = 'SelectButton';
+
 export default function BasicInfoStep() {
   const { state, dispatch } = useAssessment();
-  const [formData, setFormData] = useState<Partial<BasicInfo>>(state.formData.basicInfo);
-  const [errors, setErrors] = useState<Partial<Record<keyof BasicInfo, string>>>({});
+  const [formData, setFormData] = useState<Partial<BasicInfoFormData>>(() => 
+    state.formData.basicInfo
+  );
+  const [errors, setErrors] = useState<Partial<Record<keyof BasicInfoFormData, string>>>({});
 
-  const validateForm = () => {
-    const newErrors: Partial<Record<keyof BasicInfo, string>> = {};
+  const validateForm = useCallback((): boolean => {
+    const newErrors: Partial<Record<keyof BasicInfoFormData, string>> = {};
     
     if (!formData.ageRange) newErrors.ageRange = '请选择年龄段';
     if (!formData.gender) newErrors.gender = '请选择性别';
@@ -53,11 +71,11 @@ export default function BasicInfoStep() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -75,20 +93,6 @@ export default function BasicInfoStep() {
     }
   };
 
-  const SelectButton = ({ selected, children, ...props }: ButtonProps) => (
-    <button
-      type="button"
-      className={`px-4 py-2 text-sm rounded-md border ${
-        selected
-          ? 'border-primary bg-primary text-white'
-          : 'border-gray-300 hover:border-primary'
-      }`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-
   return (
     <div className="space-y-6">
       <div>
@@ -105,7 +109,7 @@ export default function BasicInfoStep() {
               <button
                 key={age}
                 type="button"
-                onClick={() => setFormData({ ...formData, ageRange: age })}
+                onClick={() => setFormData({ ...formData, ageRange: age as AgeRange })}
                 className={`px-4 py-2 text-sm rounded-md border ${
                   formData.ageRange === age
                     ? 'border-primary bg-primary text-white'
@@ -152,12 +156,12 @@ export default function BasicInfoStep() {
             {occupations.map((occupation) => (
               <SelectButton
                 key={occupation}
-                selected={formData.occupation?.includes(occupation)}
+                selected={formData.occupation?.includes(occupation as Occupation)}
                 onClick={() => {
                   const current = formData.occupation || [];
-                  const updated = current.includes(occupation)
+                  const updated = current.includes(occupation as Occupation)
                     ? current.filter(o => o !== occupation)
-                    : [...current, occupation];
+                    : [...current, occupation as Occupation];
                   setFormData({ ...formData, occupation: updated });
                 }}
               >

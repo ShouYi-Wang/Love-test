@@ -5,7 +5,7 @@ import { ErrorReportingService } from '../services/errorReporting';
 import { useAssessment } from '../context/AssessmentContext';
 
 interface ErrorContext {
-  [key: string]: string | number | boolean;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export function useAssessmentError() {

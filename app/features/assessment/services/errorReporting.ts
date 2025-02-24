@@ -25,7 +25,7 @@ export class ErrorReportingService {
 
   private constructor() {}
 
-  static getInstance() {
+  static getInstance(): ErrorReportingService {
     if (!this.instance) {
       this.instance = new ErrorReportingService();
     }
@@ -68,7 +68,7 @@ export class ErrorReportingService {
       });
 
       if (!response.ok) {
-        console.error('Error reporting failed:', await response.text());
+        throw new Error(`Error reporting failed: ${await response.text()}`);
       }
     } catch (err) {
       console.error('Failed to send error report:', err);

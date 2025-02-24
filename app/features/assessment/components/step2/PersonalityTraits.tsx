@@ -14,17 +14,17 @@ interface Question {
   }[];
 }
 
-interface FormData extends PersonalityTraits {
+interface FormData {
   mbtiResult: {
     [key: string]: string;
   };
   bigFiveResult: {
     [key: string]: number;
   };
-  emotionalExpression?: string[];
-  lifestyle?: {
-    schedule?: string;
-    preferences?: string[];
+  emotionalExpression: string[];
+  lifestyle: {
+    schedule: string;
+    preferences: string[];
   };
 }
 
@@ -106,8 +106,11 @@ export default function PersonalityTraitsStep() {
   const [formData, setFormData] = useState<FormData>({
     mbtiResult: state.formData.personalityTraits?.mbtiResult || {},
     bigFiveResult: state.formData.personalityTraits?.bigFiveResult || {},
-    emotionalExpression: state.formData.personalityTraits?.emotionalExpression,
-    lifestyle: state.formData.personalityTraits?.lifestyle
+    emotionalExpression: state.formData.personalityTraits?.emotionalExpression || [],
+    lifestyle: {
+      schedule: state.formData.personalityTraits?.lifestyle?.schedule || '',
+      preferences: state.formData.personalityTraits?.lifestyle?.preferences || []
+    }
   });
   const [currentSection, setCurrentSection] = useState(1); // 1: MBTI, 2: 情感表达, 3: 生活习惯
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -123,14 +126,14 @@ export default function PersonalityTraitsStep() {
         }
       });
     } else if (currentSection === 2) {
-      if (!formData.emotionalExpression?.length) {
+      if (!formData.emotionalExpression.length) {
         newErrors.emotionalExpression = '请至少选择一种表达方式';
       }
     } else if (currentSection === 3) {
-      if (!formData.lifestyle?.schedule) {
+      if (!formData.lifestyle.schedule) {
         newErrors.schedule = '请选择作息倾向';
       }
-      if (!formData.lifestyle?.preferences?.length) {
+      if (!formData.lifestyle.preferences.length) {
         newErrors.preferences = '请至少选择一个休闲活动';
       }
     }
@@ -145,7 +148,14 @@ export default function PersonalityTraitsStep() {
         setCurrentSection(currentSection + 1);
       } else {
         // 完成所有部分
-        dispatch({ type: 'UPDATE_PERSONALITY_TRAITS', payload: formData });
+        const personalityTraits: PersonalityTraits = {
+          mbtiResult: formData.mbtiResult,
+          bigFiveResult: formData.bigFiveResult,
+          emotionalExpression: formData.emotionalExpression,
+          lifestyle: formData.lifestyle
+        };
+        
+        dispatch({ type: 'UPDATE_PERSONALITY_TRAITS', payload: personalityTraits });
         dispatch({
           type: 'UPDATE_PROGRESS',
           payload: {

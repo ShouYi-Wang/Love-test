@@ -1,5 +1,8 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "error",
     "react-hooks/exhaustive-deps": "error",
@@ -10,6 +13,11 @@
     }],
     "@typescript-eslint/no-empty-interface": ["error", {
       "allowSingleExtends": true
-    }]
+    }],
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "react/jsx-no-useless-fragment": "error",
+    "react/no-array-index-key": "error"
   }
 } 

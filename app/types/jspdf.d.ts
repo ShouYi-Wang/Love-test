@@ -1,35 +1,63 @@
 declare module 'jspdf' {
   interface jsPDFAPI {
-    autoTable: (options: {
-      startY?: number;
-      head?: TableData[][];
-      body?: TableData[][];
-      theme?: string;
-      finalY?: number;
-    }) => { finalY: number };
+    autoTable: (options: AutoTableOptions) => { finalY: number };
   }
 
-  export class jsPDF {
-    constructor(options?: { orientation?: string; unit?: string; format?: string });
-    text(text: string, x: number, y: number, options?: { align?: string }): jsPDF;
+  interface AutoTableOptions {
+    startY?: number;
+    head?: TableRow[][];
+    body?: TableRow[][];
+    theme?: string;
+    finalY?: number;
+    margin?: { top: number; right: number; bottom: number; left: number };
+    pageBreak?: 'auto' | 'avoid' | 'always';
+    rowPageBreak?: 'auto' | 'avoid';
+  }
+
+  interface TableRow {
+    [key: string]: string | number;
+  }
+
+  interface jsPDFStatic {
+    save(): jsPDF;
+    restore(): jsPDF;
+    rotate(angle: number, x: number, y: number): jsPDF;
+  }
+
+  export class jsPDF implements jsPDFStatic {
+    constructor(options?: { 
+      orientation?: 'p' | 'portrait' | 'l' | 'landscape';
+      unit?: 'pt' | 'px' | 'in' | 'mm' | 'cm' | 'ex' | 'em' | 'pc';
+      format?: string | [number, number];
+      compress?: boolean;
+    });
+    
+    text(text: string, x: number, y: number, options?: { 
+      align?: 'left' | 'center' | 'right' | 'justify';
+      baseline?: 'alphabetic' | 'ideographic' | 'bottom' | 'top' | 'middle';
+      angle?: number;
+      rotationDirection?: 0 | 1;
+      isInputVisual?: boolean;
+      isOutputVisual?: boolean;
+    }): jsPDF;
+    
     setFontSize(size: number): jsPDF;
     setTextColor(r: number, g: number, b: number): jsPDF;
-    addPage(): jsPDF;
-    save(filename?: string): void;
     getNumberOfPages(): number;
     setPage(pageNumber: number): jsPDF;
+    save(filename?: string): void;
+    save(): jsPDF;
+    restore(): jsPDF;
+    rotate(angle: number, x: number, y: number): jsPDF;
     internal: {
       pageSize: {
         width: number;
         height: number;
+        getWidth: () => number;
+        getHeight: () => number;
       };
     };
-    save(): void;
-    restore(): void;
-    rotate(angle: number, x: number, y: number): jsPDF;
-    autoTable: jsPDFAPI['autoTable'];
   }
-  export default jsPDF;
 }
 
 declare module 'jspdf-autotable' {
@@ -46,18 +74,6 @@ interface TableCell {
   styles?: {
     [key: string]: string | number | boolean;
   };
-}
-
-interface TableRow {
-  [key: string]: TableCell | string | number;
-}
-
-interface AutoTableOptions {
-  startY?: number;
-  head?: TableRow[][];
-  body?: TableRow[][];
-  theme?: string;
-  finalY?: number;
 }
 
 interface TableData {

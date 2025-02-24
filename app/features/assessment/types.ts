@@ -44,15 +44,17 @@ export interface PartnerPreference {
   };
 }
 
+export interface DimensionScores {
+  personality: number;
+  lifestyle: number;
+  values: number;
+  communication: number;
+  growth: number;
+}
+
 export interface AssessmentResult {
   overallScore: number;
-  dimensionScores: {
-    personality: number;
-    lifestyle: number;
-    values: number;
-    communication: number;
-    growth: number;
-  };
+  dimensionScores: DimensionScores;
   strengthAreas: string[];
   riskAreas: string[];
   recommendations: {
@@ -70,8 +72,18 @@ export interface AssessmentState {
     partnerPreference: Partial<PartnerPreference>;
   };
   progress: {
-    stepProgress: number[];
+    stepProgress: readonly [number, number, number, number];
     currentStepCompletion: number;
   };
   results: AssessmentResult | null;
+}
+
+export type StepProgress = readonly [number, number, number, number];
+export type DimensionKey = keyof DimensionScores;
+export type AssessmentStep = 1 | 2 | 3 | 4;
+
+export function isValidStepProgress(progress: unknown): progress is StepProgress {
+  return Array.isArray(progress) && 
+         progress.length === 4 && 
+         progress.every(p => typeof p === 'number' && p >= 0 && p <= 100);
 } 
