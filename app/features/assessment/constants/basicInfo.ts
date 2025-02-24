@@ -1,4 +1,8 @@
-import { Gender, RelationshipStatus, AssessmentPurpose } from '../types';
+import { 
+  Gender, 
+  RelationshipStatus, 
+  AssessmentPurpose 
+} from '../types';
 
 export const ageRanges = ['18-24', '25-30', '31-35', '36-40', '40+'] as const;
 

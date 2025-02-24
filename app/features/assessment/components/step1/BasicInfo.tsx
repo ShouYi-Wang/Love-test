@@ -2,9 +2,11 @@
 
 import { useState, useCallback, memo } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
-import { BasicInfoFormData } from '../../types';
-
-// 将常量配置移到单独的文件
+import { 
+  BasicInfoFormData,
+  AgeRange,
+  Occupation 
+} from '../../types';  // 只导入需要的类型
 import { 
   ageRanges, 
   occupations,
@@ -14,13 +16,14 @@ import {
   assessmentPurposes 
 } from '../../constants/basicInfo';
 
-type AgeRange = typeof ageRanges[number];
+// 将常量配置移到单独的文件
+
 type Gender = 'male' | 'female' | 'other';
 type RelationshipStatus = 'single' | 'dating' | 'married';
 type AssessmentPurpose = 'findPartner' | 'evaluateRelation' | 'premaritalAssessment' | 'improveMarriage';
 type Education = typeof educationLevels[number];
-type Occupation = typeof occupations[number];
 
+// 只保留 SelectButton 的类型定义
 interface SelectButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
   selected?: boolean;
   children: React.ReactNode;

@@ -1,3 +1,17 @@
+import { 
+  ageRanges, 
+  occupations,
+  educationLevels 
+} from './constants/basicInfo';
+
+// 基础类型定义
+export type AgeRange = typeof ageRanges[number];
+export type Gender = 'male' | 'female' | 'other';
+export type RelationshipStatus = 'single' | 'dating' | 'married';
+export type AssessmentPurpose = 'findPartner' | 'evaluateRelation' | 'premaritalAssessment' | 'improveMarriage';
+export type Education = typeof educationLevels[number];
+export type Occupation = typeof occupations[number];
+
 export interface PersonalityTraits {
   mbtiResult: {
     [key: string]: string;
@@ -65,12 +79,12 @@ export interface AssessmentResult {
 }
 
 export interface BasicInfoFormData {
-  ageRange: typeof ageRanges[number];
-  gender: 'male' | 'female' | 'other';
-  occupation: (typeof occupations[number])[];
-  education: typeof educationLevels[number];
-  relationshipStatus: 'single' | 'dating' | 'married';
-  assessmentPurpose: 'findPartner' | 'evaluateRelation' | 'premaritalAssessment' | 'improveMarriage';
+  ageRange: AgeRange;
+  gender: Gender;
+  occupation: Occupation[];
+  education: Education;
+  relationshipStatus: RelationshipStatus;
+  assessmentPurpose: AssessmentPurpose;
 }
 
 export interface AssessmentState {
