@@ -7,6 +7,7 @@ import { PersonalityTraits } from '../../types';
 interface Question {
   id: string;
   text: string;
+  title?: string;
   options: {
     value: string;
     text: string;
@@ -39,26 +40,26 @@ const mbtiQuestions: Question[] = [
   },
   {
     id: 'S_N',
-    title: '在处理信息时',
+    text: '在处理信息时',
     options: [
-      { value: 'S', label: '我更关注具体的事实和细节' },
-      { value: 'N', label: '我更喜欢思考可能性和创意' }
+      { value: 'S', text: '我更关注具体的事实和细节' },
+      { value: 'N', text: '我更喜欢思考可能性和创意' }
     ]
   },
   {
     id: 'T_F',
-    title: '在做决定时',
+    text: '在做决定时',
     options: [
-      { value: 'T', label: '我倾向于依据逻辑和客观分析' },
-      { value: 'F', label: '我更看重个人价值观和感受' }
+      { value: 'T', text: '我倾向于依据逻辑和客观分析' },
+      { value: 'F', text: '我更看重个人价值观和感受' }
     ]
   },
   {
     id: 'J_P',
-    title: '在生活方式上',
+    text: '在生活方式上',
     options: [
-      { value: 'J', label: '我喜欢提前计划和做出决定' },
-      { value: 'P', label: '我更喜欢保持灵活和随机应变' }
+      { value: 'J', text: '我喜欢提前计划和做出决定' },
+      { value: 'P', text: '我更喜欢保持灵活和随机应变' }
     ]
   }
 ];
@@ -167,20 +168,22 @@ export default function PersonalityTraitsStep() {
 
   const renderMBTISection = () => (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold text-gray-900">性格倾向测试</h3>
+      <h3 className="text-xl font-semibold text-gray-900">MBTI 性格测评</h3>
       {mbtiQuestions.map((question) => (
         <div key={question.id} className="space-y-4">
           <p className="font-medium text-gray-900">{question.text}</p>
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             {question.options.map((option) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => {
-                  const currentMbti = formData.mbtiResult || {};
                   setFormData({
                     ...formData,
-                    mbtiResult: { ...currentMbti, [question.id]: option.value }
+                    mbtiResult: {
+                      ...formData.mbtiResult,
+                      [question.id]: option.value
+                    }
                   });
                 }}
                 className={`p-4 text-left rounded-lg border ${
