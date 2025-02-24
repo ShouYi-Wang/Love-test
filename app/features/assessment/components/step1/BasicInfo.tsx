@@ -2,7 +2,6 @@
 
 import { useState, useCallback, memo } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
-import { BasicInfo } from '../../types';
 
 // 将常量配置移到单独的文件
 import { 

@@ -56,9 +56,24 @@ const generateResults = (): AssessmentResult => {
 };
 
 // 将结果展示部分拆分为单独的组件
-const ResultDisplay = memo(({ result }: { result: AssessmentResult }) => {
-  // ... 展示逻辑
-});
+const ResultDisplay = memo(({ result }: { result: AssessmentResult }) => (
+  <div className="space-y-8">
+    {/* 总体评分 */}
+    <div className="text-center">
+      <AnimatedScore value={result.overallScore} />
+      <p className="mt-2 text-gray-600">
+        {result.overallScore >= 85 ? '非常契合' :
+         result.overallScore >= 70 ? '比较契合' :
+         result.overallScore >= 60 ? '基本契合' : '需要努力'}
+      </p>
+    </div>
+
+    {/* 维度分析 */}
+    <div className="space-y-4">
+      {/* ... 其他展示逻辑 ... */}
+    </div>
+  </div>
+));
 
 ResultDisplay.displayName = 'ResultDisplay';
 

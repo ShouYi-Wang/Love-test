@@ -18,6 +18,7 @@
     "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/no-non-null-assertion": "error",
     "react/jsx-no-useless-fragment": "error",
-    "react/no-array-index-key": "error"
+    "react/no-array-index-key": "error",
+    "@typescript-eslint/no-require-imports": "error"
   }
 } 

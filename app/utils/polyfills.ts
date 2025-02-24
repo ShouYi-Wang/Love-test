@@ -1,16 +1,24 @@
-export function loadPolyfills() {
-  if (typeof window !== 'undefined') {
-    // 按需加载 polyfills
+import 'promise/polyfill';
+import 'whatwg-fetch';
+import 'intersection-observer';
+
+export function loadPolyfills(): void {
+  if (typeof window === 'undefined') return;
+
+  // 动态导入 polyfills
+  const loadDynamicPolyfills = async () => {
     if (!window.Promise) {
-      require('promise/polyfill');
+      await import('promise/polyfill');
     }
     
     if (!window.fetch) {
-      require('whatwg-fetch');
+      await import('whatwg-fetch');
     }
     
     if (!window.IntersectionObserver) {
-      require('intersection-observer');
+      await import('intersection-observer');
     }
-  }
+  };
+
+  void loadDynamicPolyfills();
 } 
