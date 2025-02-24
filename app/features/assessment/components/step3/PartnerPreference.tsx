@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
-import { PartnerPreference } from '../../types';
+import { PartnerPreference, RelationshipExpectationKey } from '../../types';
 
 // 理想伴侣特质选项
 const idealTraitsOptions = {
@@ -21,22 +21,31 @@ const idealTraitsOptions = {
 };
 
 // 关系期待程度问题
-const relationshipExpectations = [
+interface ExpectationQuestion {
+  id: RelationshipExpectationKey;
+  label: string;
+  min: number;
+  max: number;
+  minLabel: string;
+  maxLabel: string;
+}
+
+const expectationQuestions: ExpectationQuestion[] = [
   {
     id: 'commitment',
-    title: '感情投入意愿',
-    description: '您期望在关系中投入多少精力和时间？',
+    label: '期望的承诺程度',
     min: 1,
-    max: 5,
-    labels: ['较少投入', '适度投入', '完全投入']
+    max: 10,
+    minLabel: '开放关系',
+    maxLabel: '完全忠诚'
   },
   {
     id: 'growthMindset',
-    title: '共同成长意愿',
-    description: '您有多重视与伴侣共同成长和进步？',
+    label: '成长意愿',
     min: 1,
-    max: 5,
-    labels: ['一般重视', '比较重视', '非常重视']
+    max: 10,
+    minLabel: '保持现状',
+    maxLabel: '持续进步'
   }
 ];
 
@@ -255,42 +264,31 @@ export default function PartnerPreferenceStep() {
     <div className="space-y-6">
       <h3 className="text-xl font-semibold text-gray-900">关系期待程度</h3>
       
-      {relationshipExpectations.map((question) => (
-        <div key={question.id} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              {question.title}
-            </label>
-            <p className="mt-1 text-sm text-gray-500">{question.description}</p>
+      {expectationQuestions.map((question) => (
+        <div key={question.id} className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            {question.label}
+          </label>
+          <input
+            type="range"
+            min={question.min}
+            max={question.max}
+            value={formData.relationshipExpectation?.[question.id] || 0}
+            onChange={(e) => {
+              setFormData({
+                ...formData,
+                relationshipExpectation: {
+                  ...formData.relationshipExpectation,
+                  [question.id]: parseInt(e.target.value, 10)
+                }
+              });
+            }}
+            className="w-full"
+          />
+          <div className="flex justify-between text-sm text-gray-500">
+            <span>{question.minLabel}</span>
+            <span>{question.maxLabel}</span>
           </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              {question.labels.map((label, index) => (
-                <span key={index} className="text-xs text-gray-500">
-                  {label}
-                </span>
-              ))}
-            </div>
-            <input
-              type="range"
-              min={question.min}
-              max={question.max}
-              value={formData.relationshipExpectation?.[question.id] || 0}
-              onChange={(e) => {
-                setFormData({
-                  ...formData,
-                  relationshipExpectation: {
-                    ...formData.relationshipExpectation,
-                    [question.id]: parseInt(e.target.value)
-                  }
-                });
-              }}
-              className="w-full"
-            />
-          </div>
-          {errors[question.id] && (
-            <p className="text-sm text-red-600">{errors[question.id]}</p>
-          )}
         </div>
       ))}
     </div>

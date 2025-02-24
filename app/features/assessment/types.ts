@@ -35,6 +35,9 @@ export interface BasicInfo {
   assessmentPurpose: string;
 }
 
+// 添加关系期望的键名类型
+export type RelationshipExpectationKey = 'commitment' | 'growthMindset';
+
 export interface PartnerPreference {
   idealTraits: {
     personality: string[];
