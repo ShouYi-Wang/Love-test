@@ -24,17 +24,17 @@ const initialState: AssessmentState = {
 };
 
 // Action 类型
-type AssessmentAction =
+type Action =
   | { type: 'SET_STEP'; payload: number }
+  | { type: 'UPDATE_PROGRESS'; payload: { stepProgress: number[]; currentStepCompletion: number } }
   | { type: 'UPDATE_BASIC_INFO'; payload: Partial<BasicInfo> }
   | { type: 'UPDATE_PERSONALITY_TRAITS'; payload: Partial<PersonalityTraits> }
   | { type: 'UPDATE_PARTNER_PREFERENCE'; payload: Partial<PartnerPreference> }
-  | { type: 'UPDATE_PROGRESS'; payload: Partial<AssessmentState['progress']> }
-  | { type: 'SET_RESULTS'; payload: Partial<AssessmentResult> }
+  | { type: 'SET_RESULTS'; payload: AssessmentResult }
   | { type: 'RESTORE_STATE'; payload: AssessmentState };
 
 // Reducer
-function assessmentReducer(state: AssessmentState, action: AssessmentAction): AssessmentState {
+function assessmentReducer(state: AssessmentState, action: Action): AssessmentState {
   switch (action.type) {
     case 'SET_STEP':
       return { ...state, currentStep: action.payload };
@@ -68,7 +68,7 @@ function assessmentReducer(state: AssessmentState, action: AssessmentAction): As
         progress: { ...state.progress, ...action.payload },
       };
     case 'SET_RESULTS':
-      return { ...state, results: { ...state.results, ...action.payload } };
+      return { ...state, results: action.payload };
     case 'RESTORE_STATE':
       return action.payload;
     default:
@@ -79,7 +79,7 @@ function assessmentReducer(state: AssessmentState, action: AssessmentAction): As
 // Context
 const AssessmentContext = createContext<{
   state: AssessmentState;
-  dispatch: React.Dispatch<AssessmentAction>;
+  dispatch: React.Dispatch<Action>;
 } | null>(null);
 
 // Provider 组件

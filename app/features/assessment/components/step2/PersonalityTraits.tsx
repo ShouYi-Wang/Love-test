@@ -4,14 +4,34 @@ import { useState } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
 import { PersonalityTraits } from '../../types';
 
+interface Question {
+  id: string;
+  text: string;
+  options: {
+    value: string;
+    text: string;
+  }[];
+}
+
+// 定义 MBTI 结果类型
+interface MBTIResult {
+  [key: string]: string;
+}
+
+// 定义表单数据类型
+interface FormData {
+  mbtiResult: MBTIResult;
+  bigFiveResult: Record<string, number>;
+}
+
 // MBTI性格维度题目
-const mbtiQuestions = [
+const mbtiQuestions: Question[] = [
   {
     id: 'E_I',
-    title: '在社交场合中',
+    text: '在社交场合中，您更倾向于：',
     options: [
-      { value: 'E', label: '我倾向于主动与他人交谈,能量会增加' },
-      { value: 'I', label: '我更喜欢安静观察,需要独处恢复能量' }
+      { value: 'E', text: '积极主动与他人交谈' },
+      { value: 'I', text: '等待他人来与您交谈' }
     ]
   },
   {
@@ -79,9 +99,10 @@ const lifestyleQuestions = [
 
 export default function PersonalityTraitsStep() {
   const { state, dispatch } = useAssessment();
-  const [formData, setFormData] = useState<Partial<PersonalityTraits>>(
-    state.formData.personalityTraits
-  );
+  const [formData, setFormData] = useState<FormData>({
+    mbtiResult: state.formData.personalityTraits?.mbtiResult || {},
+    bigFiveResult: state.formData.personalityTraits?.bigFiveResult || {}
+  });
   const [currentSection, setCurrentSection] = useState(1); // 1: MBTI, 2: 情感表达, 3: 生活习惯
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -90,7 +111,7 @@ export default function PersonalityTraitsStep() {
 
     if (currentSection === 1) {
       mbtiQuestions.forEach(q => {
-        if (!formData.mbtiResult?.[q.id]) {
+        if (!formData.mbtiResult[q.id]) {
           newErrors[q.id] = '请选择一个选项';
         }
       });
@@ -143,7 +164,7 @@ export default function PersonalityTraitsStep() {
       <h3 className="text-xl font-semibold text-gray-900">性格倾向测试</h3>
       {mbtiQuestions.map((question) => (
         <div key={question.id} className="space-y-4">
-          <p className="font-medium text-gray-900">{question.title}</p>
+          <p className="font-medium text-gray-900">{question.text}</p>
           <div className="grid grid-cols-1 gap-3">
             {question.options.map((option) => (
               <button
@@ -157,12 +178,12 @@ export default function PersonalityTraitsStep() {
                   });
                 }}
                 className={`p-4 text-left rounded-lg border ${
-                  formData.mbtiResult?.[question.id] === option.value
+                  formData.mbtiResult[question.id] === option.value
                     ? 'border-primary bg-primary-50 text-primary'
                     : 'border-gray-200 hover:border-primary'
                 }`}
               >
-                {option.label}
+                {option.text}
               </button>
             ))}
           </div>
