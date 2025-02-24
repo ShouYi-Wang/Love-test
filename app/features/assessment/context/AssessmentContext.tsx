@@ -4,7 +4,8 @@ import {
   BasicInfo, 
   PersonalityTraits, 
   PartnerPreference,
-  AssessmentResult 
+  AssessmentResult,
+  BasicInfoFormData
 } from '../types';
 
 // 初始状态
@@ -52,17 +53,17 @@ const initialState: AssessmentState = {
 };
 
 // Action 类型
-type Action =
-  | { type: 'SET_STEP'; payload: number }
-  | { type: 'UPDATE_PROGRESS'; payload: { stepProgress: number[]; currentStepCompletion: number } }
-  | { type: 'UPDATE_BASIC_INFO'; payload: Partial<BasicInfo> }
+type AssessmentAction =
+  | { type: 'UPDATE_BASIC_INFO'; payload: Partial<BasicInfoFormData> }
   | { type: 'UPDATE_PERSONALITY_TRAITS'; payload: Partial<PersonalityTraits> }
   | { type: 'UPDATE_PARTNER_PREFERENCE'; payload: Partial<PartnerPreference> }
+  | { type: 'UPDATE_PROGRESS'; payload: { stepProgress: StepProgress; currentStepCompletion: number } }
+  | { type: 'SET_STEP'; payload: number }
   | { type: 'SET_RESULTS'; payload: AssessmentResult }
   | { type: 'RESTORE_STATE'; payload: AssessmentState };
 
 // Reducer
-function assessmentReducer(state: AssessmentState, action: Action): AssessmentState {
+function assessmentReducer(state: AssessmentState, action: AssessmentAction): AssessmentState {
   switch (action.type) {
     case 'SET_STEP':
       return { ...state, currentStep: action.payload };
@@ -71,7 +72,7 @@ function assessmentReducer(state: AssessmentState, action: Action): AssessmentSt
         ...state,
         formData: {
           ...state.formData,
-          basicInfo: { ...state.formData.basicInfo, ...action.payload },
+          basicInfo: action.payload,
         },
       };
     case 'UPDATE_PERSONALITY_TRAITS':
@@ -107,7 +108,7 @@ function assessmentReducer(state: AssessmentState, action: Action): AssessmentSt
 // Context
 const AssessmentContext = createContext<{
   state: AssessmentState;
-  dispatch: React.Dispatch<Action>;
+  dispatch: React.Dispatch<AssessmentAction>;
 } | null>(null);
 
 // Provider 组件

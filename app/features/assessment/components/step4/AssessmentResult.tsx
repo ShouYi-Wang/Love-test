@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, memo } from 'react';
+import { useEffect, useState, memo, useCallback } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
 import { AssessmentResult } from '../../types';
 import { useAssessmentStorage } from '../../hooks/useAssessmentStorage';
@@ -59,8 +59,8 @@ export default function AssessmentResultStep() {
   const [showPreview, setShowPreview] = useState(false);
   const router = useRouter();
 
-  // 将函数提取到组件作用域
-  const generateAssessmentResults = async () => {
+  // 使用 useCallback 包装函数
+  const generateAssessmentResults = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -89,7 +89,7 @@ export default function AssessmentResultStep() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dispatch]);  // 只依赖 dispatch
 
   useEffect(() => {
     if (!state.results) {
@@ -98,7 +98,7 @@ export default function AssessmentResultStep() {
       setResult(state.results);
       setLoading(false);
     }
-  }, [state.results]);  // 移除 dispatch 依赖，因为它是稳定的
+  }, [state.results, generateAssessmentResults]);  // 添加所有依赖
 
   useEffect(() => {
     if (!loading && result) {
