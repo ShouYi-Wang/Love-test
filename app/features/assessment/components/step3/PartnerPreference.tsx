@@ -365,13 +365,14 @@ export default function PartnerPreferenceStep() {
                 const updated = current.includes(option)
                   ? current.filter(o => o !== option)
                   : [...current, option];
-                setFormData({
-                  ...formData,
+                setFormData(prev => ({
+                  ...prev,
                   acceptanceLevel: {
-                    ...formData.acceptanceLevel,
+                    toleranceScore: prev.acceptanceLevel?.toleranceScore ?? 0,
+                    compromiseWillingness: prev.acceptanceLevel?.compromiseWillingness ?? 0,
                     conflictResolution: updated
                   }
-                });
+                }));
               }}
               className={`p-4 text-left rounded-lg border ${
                 formData.acceptanceLevel?.conflictResolution?.includes(option)
