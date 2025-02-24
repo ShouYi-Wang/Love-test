@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
-import { PartnerPreference, RelationshipExpectationKey } from '../../types';
+import { PartnerPreference, RelationshipExpectationKey, AcceptanceLevelKey } from '../../types';
 
 // 理想伴侣特质选项
 const idealTraitsOptions = {
@@ -50,7 +50,16 @@ const expectationQuestions: ExpectationQuestion[] = [
 ];
 
 // 可接受度测评问题
-const acceptanceLevels = [
+interface AcceptanceQuestion {
+  id: AcceptanceLevelKey;
+  title: string;
+  description: string;
+  min: number;
+  max: number;
+  labels: string[];
+}
+
+const acceptanceQuestions: AcceptanceQuestion[] = [
   {
     id: 'toleranceScore',
     title: '差异容忍度',
@@ -89,6 +98,12 @@ export default function PartnerPreferenceStep() {
       futurePlanning: [],
       growthMindset: 0,
       ...state.formData.partnerPreference?.relationshipExpectation
+    },
+    acceptanceLevel: {
+      toleranceScore: 0,
+      conflictResolution: [],
+      compromiseWillingness: 0,
+      ...state.formData.partnerPreference?.acceptanceLevel
     }
   }));
   const [currentSection, setCurrentSection] = useState(1); // 1: 理想特质, 2: 关系期待, 3: 可接受度
@@ -302,42 +317,36 @@ export default function PartnerPreferenceStep() {
     <div className="space-y-6">
       <h3 className="text-xl font-semibold text-gray-900">可接受度测评</h3>
       
-      {acceptanceLevels.map((question) => (
-        <div key={question.id} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              {question.title}
-            </label>
-            <p className="mt-1 text-sm text-gray-500">{question.description}</p>
+      {acceptanceQuestions.map((question) => (
+        <div key={question.id} className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            {question.title}
+          </label>
+          <p className="mt-1 text-sm text-gray-500">{question.description}</p>
+          <input
+            type="range"
+            min={question.min}
+            max={question.max}
+            value={formData.acceptanceLevel?.[question.id] ?? 0}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              setFormData(prev => ({
+                ...prev,
+                acceptanceLevel: {
+                  toleranceScore: prev.acceptanceLevel?.toleranceScore ?? 0,
+                  conflictResolution: prev.acceptanceLevel?.conflictResolution ?? [],
+                  compromiseWillingness: prev.acceptanceLevel?.compromiseWillingness ?? 0,
+                  [question.id]: value
+                }
+              }));
+            }}
+            className="w-full"
+          />
+          <div className="flex justify-between text-sm text-gray-500">
+            {question.labels.map((label, index) => (
+              <span key={index}>{label}</span>
+            ))}
           </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              {question.labels.map((label, index) => (
-                <span key={index} className="text-xs text-gray-500">
-                  {label}
-                </span>
-              ))}
-            </div>
-            <input
-              type="range"
-              min={question.min}
-              max={question.max}
-              value={formData.acceptanceLevel?.[question.id] || 0}
-              onChange={(e) => {
-                setFormData({
-                  ...formData,
-                  acceptanceLevel: {
-                    ...formData.acceptanceLevel,
-                    [question.id]: parseInt(e.target.value)
-                  }
-                });
-              }}
-              className="w-full"
-            />
-          </div>
-          {errors[question.id] && (
-            <p className="text-sm text-red-600">{errors[question.id]}</p>
-          )}
         </div>
       ))}
 

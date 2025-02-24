@@ -38,6 +38,9 @@ export interface BasicInfo {
 // 添加关系期望的键名类型
 export type RelationshipExpectationKey = 'commitment' | 'growthMindset';
 
+// 添加可接受度的键名类型
+export type AcceptanceLevelKey = 'toleranceScore' | 'compromiseWillingness';
+
 export interface PartnerPreference {
   idealTraits: {
     personality: string[];
