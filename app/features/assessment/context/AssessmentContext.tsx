@@ -1,11 +1,11 @@
 import { createContext, useContext, useReducer, ReactNode } from 'react';
 import { 
   AssessmentState, 
-  BasicInfo, 
   PersonalityTraits, 
   PartnerPreference,
   AssessmentResult,
-  BasicInfoFormData
+  BasicInfoFormData,
+  StepProgress
 } from '../types';
 
 // 初始状态
