@@ -81,15 +81,16 @@ const conflictResolutionOptions = [
 
 export default function PartnerPreferenceStep() {
   const { state, dispatch } = useAssessment();
-  const [formData, setFormData] = useState<Partial<PartnerPreference>>(
-    state.formData.partnerPreference || {
-      idealTraits: {
-        personality: [],
-        lifestyle: [],
-        values: []
-      }
+  const [formData, setFormData] = useState<Partial<PartnerPreference>>(() => ({
+    ...state.formData.partnerPreference,
+    // 提供默认值
+    relationshipExpectation: {
+      commitment: 0,
+      futurePlanning: [],
+      growthMindset: 0,
+      ...state.formData.partnerPreference?.relationshipExpectation
     }
-  );
+  }));
   const [currentSection, setCurrentSection] = useState(1); // 1: 理想特质, 2: 关系期待, 3: 可接受度
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -273,15 +274,18 @@ export default function PartnerPreferenceStep() {
             type="range"
             min={question.min}
             max={question.max}
-            value={formData.relationshipExpectation?.[question.id] || 0}
+            value={formData.relationshipExpectation?.[question.id] ?? 0}
             onChange={(e) => {
-              setFormData({
-                ...formData,
+              const value = parseInt(e.target.value, 10);
+              setFormData(prev => ({
+                ...prev,
                 relationshipExpectation: {
-                  ...formData.relationshipExpectation,
-                  [question.id]: parseInt(e.target.value, 10)
+                  commitment: prev.relationshipExpectation?.commitment ?? 0,
+                  futurePlanning: prev.relationshipExpectation?.futurePlanning ?? [],
+                  growthMindset: prev.relationshipExpectation?.growthMindset ?? 0,
+                  [question.id]: value
                 }
-              });
+              }));
             }}
             className="w-full"
           />
