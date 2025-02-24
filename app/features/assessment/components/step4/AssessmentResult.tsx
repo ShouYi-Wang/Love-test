@@ -13,6 +13,7 @@ import ReportPreview from './ReportPreview';
 import AnimatedScore from '../common/AnimatedScore';
 import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from '@/app/components/ErrorBoundary';
+import { generateResults } from '../../utils/assessment';
 
 // 模拟AI分析结果生成
 const generateResults = (): AssessmentResult => {
@@ -77,50 +78,68 @@ const ResultDisplay = memo(({ result }: { result: AssessmentResult }) => (
 
 ResultDisplay.displayName = 'ResultDisplay';
 
+// 添加类型守卫函数
+function isAssessmentResult(value: unknown): value is AssessmentResult {
+  if (!value || typeof value !== 'object') return false;
+  
+  const result = value as Partial<AssessmentResult>;
+  return (
+    typeof result.overallScore === 'number' &&
+    result.dimensionScores !== undefined &&
+    Array.isArray(result.strengthAreas) &&
+    Array.isArray(result.riskAreas) &&
+    result.recommendations !== undefined
+  );
+}
+
 export default function AssessmentResultStep() {
-  const { dispatch } = useAssessment();
-  const [loading, setLoading] = useState(true);
+  const { state, dispatch } = useAssessment();
   const [result, setResult] = useState<AssessmentResult | null>(null);
-  const { error, handleError, clearError } = useAssessmentError();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { clearStorage } = useAssessmentStorage();
   const [showPreview, setShowPreview] = useState(false);
   const router = useRouter();
 
-  const generateAssessmentResults = useCallback(async () => {
-    try {
-      setLoading(true);
-      clearError();
-      
-      // 添加超时处理
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('生成超时')), 30000);
-      });
-      
-      const resultPromise = generateResults();
-      const results = await Promise.race([resultPromise, timeoutPromise]);
-      
-      setResult(results as AssessmentResult);
-      dispatch({ type: 'SET_RESULTS', payload: results });
-      dispatch({
-        type: 'UPDATE_PROGRESS',
-        payload: {
-          stepProgress: [100, 100, 100, 100],
-          currentStepCompletion: 100
+  useEffect(() => {
+    const generateAssessmentResults = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // 模拟API调用延迟
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const results = await generateResults();
+        
+        // 使用类型守卫验证结果
+        if (!isAssessmentResult(results)) {
+          throw new Error('Invalid assessment results format');
         }
-      });
-    } catch (err) {
-      handleError(err as Error);
-    } finally {
+
+        setResult(results);
+        dispatch({ type: 'SET_RESULTS', payload: results });
+        dispatch({
+          type: 'UPDATE_PROGRESS',
+          payload: {
+            stepProgress: [100, 100, 100, 100],
+            currentStepCompletion: 100
+          }
+        });
+      } catch (e) {
+        setError(e instanceof Error ? e.message : '生成评估结果时出错');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!state.results) {
+      void generateAssessmentResults();
+    } else {
+      setResult(state.results);
       setLoading(false);
     }
-  }, [dispatch, clearError, handleError]);
-
-  useEffect(() => {
-    const initResults = async () => {
-      await generateAssessmentResults();
-    };
-    initResults();
-  }, [generateAssessmentResults]);
+  }, [state.results, dispatch]);
 
   useEffect(() => {
     if (!loading && result) {
@@ -134,7 +153,7 @@ export default function AssessmentResultStep() {
         await shareResults(result);
       }
     } catch (err) {
-      handleError(err as Error);
+      setError(err instanceof Error ? err.message : '分享结果时出错');
     }
   };
 
@@ -150,12 +169,12 @@ export default function AssessmentResultStep() {
       // 保存PDF
       doc.save(fileName);
     } catch (err) {
-      handleError(err as Error, { action: 'save_pdf' });
+      setError(err instanceof Error ? err.message : '保存报告时出错');
     }
   };
 
   const handleRetry = () => {
-    generateAssessmentResults();
+    void generateAssessmentResults();
   };
 
   const handleBackToHome = () => {
