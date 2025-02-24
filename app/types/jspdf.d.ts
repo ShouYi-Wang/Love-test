@@ -35,8 +35,8 @@ declare module 'jspdf' {
 declare module 'jspdf-autotable' {
   export interface UserOptions {
     startY?: number;
-    head?: any[][];
-    body?: any[][];
+    head?: TableData[][];
+    body?: TableData[][];
     theme?: string;
   }
 }

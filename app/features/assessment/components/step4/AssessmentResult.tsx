@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
 import { AssessmentResult, BasicInfo, PersonalityTraits, PartnerPreference } from '../../types';
 import { useAssessmentStorage } from '../../hooks/useAssessmentStorage';
@@ -12,12 +12,6 @@ import { generatePDF } from '../../utils/pdfGenerator';
 import ReportPreview from './ReportPreview';
 import AnimatedScore from '../common/AnimatedScore';
 import { useRouter } from 'next/navigation';
-
-interface FormData {
-  basicInfo: Partial<BasicInfo>;
-  personalityTraits: Partial<PersonalityTraits>;
-  partnerPreference: Partial<PartnerPreference>;
-}
 
 // 模拟AI分析结果生成
 function generateResults(): AssessmentResult {
@@ -70,7 +64,7 @@ export default function AssessmentResultStep() {
   const [showPreview, setShowPreview] = useState(false);
   const router = useRouter();
 
-  const generateAssessmentResults = async () => {
+  const generateAssessmentResults = useCallback(async () => {
     try {
       setLoading(true);
       clearError();
@@ -89,7 +83,7 @@ export default function AssessmentResultStep() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dispatch, clearError, handleError]);
 
   useEffect(() => {
     const initResults = async () => {

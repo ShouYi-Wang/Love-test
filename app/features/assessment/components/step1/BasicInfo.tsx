@@ -26,15 +26,15 @@ interface FormEvent extends React.FormEvent {
   target: HTMLFormElement;
 }
 
-interface SelectEvent extends React.ChangeEvent<HTMLSelectElement> {
+interface CustomChangeEvent extends React.ChangeEvent<HTMLSelectElement | HTMLInputElement> {
   target: {
     name: string;
     value: string;
   };
 }
 
-interface CustomChangeEvent extends React.ChangeEvent<HTMLSelectElement | HTMLInputElement> {
-  target: {
+interface ButtonClickEvent {
+  currentTarget: {
     name: string;
     value: string;
   };
@@ -74,8 +74,8 @@ export default function BasicInfoStep() {
     }
   };
 
-  const handleChange = (e: CustomChangeEvent) => {
-    const { name, value } = e.target;
+  const handleButtonClick = (e: ButtonClickEvent) => {
+    const { name, value } = e.currentTarget;
     setFormData({ ...formData, [name]: value });
   };
 
@@ -174,7 +174,7 @@ export default function BasicInfoStep() {
           <label className="block text-sm font-medium text-gray-700">教育背景</label>
           <select
             value={formData.education || ''}
-            onChange={handleChange}
+            onChange={handleButtonClick}
             name="education"
             className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
           >

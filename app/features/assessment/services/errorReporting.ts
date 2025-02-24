@@ -33,7 +33,21 @@ export class ErrorReportingService {
   }
 
   private async sendError(data: ErrorData): Promise<void> {
-    // ... 实现
+    try {
+      const response = await fetch(this.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        console.error('Error reporting failed:', await response.text());
+      }
+    } catch (err) {
+      console.error('Failed to send error report:', err);
+    }
   }
 
   public async reportError(error: Error, context?: ErrorContext): Promise<void> {

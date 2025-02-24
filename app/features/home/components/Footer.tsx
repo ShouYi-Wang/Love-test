@@ -21,6 +21,12 @@ const navigation = {
   ],
 };
 
+interface FooterProps {
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+}
+
 export default function Footer() {
   return (
     <footer className="bg-white">
