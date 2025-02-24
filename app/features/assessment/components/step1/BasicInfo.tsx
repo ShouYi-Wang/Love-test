@@ -49,7 +49,7 @@ export default function BasicInfoStep() {
   const { state, dispatch } = useAssessment();
   const [formData, setFormData] = useState<Partial<BasicInfoFormData>>(() => ({
     ...state.formData.basicInfo,
-    ageRange: state.formData.basicInfo.ageRange as BasicInfoFormData['ageRange']
+    ageRange: state.formData.basicInfo.ageRange as AgeRange
   }));
   const [errors, setErrors] = useState<Partial<Record<keyof BasicInfoFormData, string>>>({});
 
@@ -70,6 +70,22 @@ export default function BasicInfoStep() {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleGenderSelect = (value: Gender) => {
+    setFormData(prev => ({ ...prev, gender: value }));
+  };
+
+  const handleRelationshipSelect = (value: RelationshipStatus) => {
+    setFormData(prev => ({ ...prev, relationshipStatus: value }));
+  };
+
+  const handlePurposeSelect = (value: AssessmentPurpose) => {
+    setFormData(prev => ({ ...prev, assessmentPurpose: value }));
+  };
+
+  const handleEducationSelect = (value: Education) => {
+    setFormData(prev => ({ ...prev, education: value }));
   };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -127,7 +143,7 @@ export default function BasicInfoStep() {
               <button
                 key={option.value}
                 type="button"
-                onClick={() => setFormData(prev => ({ ...prev, gender: option.value }))}
+                onClick={() => handleGenderSelect(option.value)}
                 className={`px-4 py-2 text-sm rounded-md border ${
                   formData.gender === option.value
                     ? 'border-primary bg-primary text-white'
@@ -193,18 +209,18 @@ export default function BasicInfoStep() {
         <div>
           <label className="block text-sm font-medium text-gray-700">感情状况</label>
           <div className="mt-2 grid grid-cols-3 gap-3">
-            {relationshipStatuses.map((status) => (
+            {relationshipStatuses.map((option) => (
               <button
-                key={status.value}
+                key={option.value}
                 type="button"
-                onClick={() => setFormData({ ...formData, relationshipStatus: status.value })}
+                onClick={() => handleRelationshipSelect(option.value)}
                 className={`px-4 py-2 text-sm rounded-md border ${
-                  formData.relationshipStatus === status.value
+                  formData.relationshipStatus === option.value
                     ? 'border-primary bg-primary text-white'
                     : 'border-gray-300 hover:border-primary'
                 }`}
               >
-                {status.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -221,7 +237,7 @@ export default function BasicInfoStep() {
               <button
                 key={purpose.value}
                 type="button"
-                onClick={() => setFormData({ ...formData, assessmentPurpose: purpose.value })}
+                onClick={() => handlePurposeSelect(purpose.value)}
                 className={`px-4 py-2 text-sm rounded-md border ${
                   formData.assessmentPurpose === purpose.value
                     ? 'border-primary bg-primary text-white'
