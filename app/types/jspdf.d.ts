@@ -41,8 +41,15 @@ declare module 'jspdf-autotable' {
   }
 }
 
+interface TableCell {
+  content: string | number;
+  styles?: {
+    [key: string]: string | number | boolean;
+  };
+}
+
 interface TableRow {
-  [key: string]: string | number;
+  [key: string]: TableCell | string | number;
 }
 
 interface AutoTableOptions {

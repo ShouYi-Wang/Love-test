@@ -60,7 +60,7 @@ export async function generatePDF(result: AssessmentResult) {
   // 需要关注
   doc.setFontSize(16);
   doc.text('需要关注', 20, currentY);
-  result.riskAreas.forEach((risk, index) => {
+  result.riskAreas.forEach((risk) => {
     currentY += 10;
     doc.setFontSize(12);
     doc.text(`• ${risk}`, 25, currentY);
@@ -77,7 +77,7 @@ export async function generatePDF(result: AssessmentResult) {
   currentY += 15;
   doc.setFontSize(14);
   doc.text('短期行动计划:', 20, currentY);
-  result.recommendations.shortTerm.forEach((item, index) => {
+  result.recommendations.shortTerm.forEach((item) => {
     currentY += 10;
     doc.setFontSize(12);
     doc.text(`• ${item}`, 25, currentY);
@@ -87,7 +87,7 @@ export async function generatePDF(result: AssessmentResult) {
   currentY += 20;
   doc.setFontSize(14);
   doc.text('长期发展建议:', 20, currentY);
-  result.recommendations.longTerm.forEach((item, index) => {
+  result.recommendations.longTerm.forEach((item) => {
     currentY += 10;
     doc.setFontSize(12);
     doc.text(`• ${item}`, 25, currentY);
@@ -97,7 +97,7 @@ export async function generatePDF(result: AssessmentResult) {
   currentY += 20;
   doc.setFontSize(14);
   doc.text('具体实践步骤:', 20, currentY);
-  result.recommendations.practicalSteps.forEach((item, index) => {
+  result.recommendations.practicalSteps.forEach((item) => {
     currentY += 10;
     doc.setFontSize(12);
     doc.text(`• ${item}`, 25, currentY);

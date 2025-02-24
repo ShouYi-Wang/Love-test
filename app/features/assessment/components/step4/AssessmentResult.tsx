@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
-import { AssessmentResult } from '../../types';
+import { AssessmentResult, BasicInfo, PersonalityTraits, PartnerPreference } from '../../types';
 import { useAssessmentStorage } from '../../hooks/useAssessmentStorage';
 import { shareResults } from '../../utils/share';
 import NextSteps from './NextSteps';
@@ -13,12 +13,10 @@ import ReportPreview from './ReportPreview';
 import AnimatedScore from '../common/AnimatedScore';
 import { useRouter } from 'next/navigation';
 
-// 添加具体的 formData 类型
 interface FormData {
-  // 添加你的表单字段类型
-  name: string;
-  age: number;
-  // ...其他字段
+  basicInfo: Partial<BasicInfo>;
+  personalityTraits: Partial<PersonalityTraits>;
+  partnerPreference: Partial<PartnerPreference>;
 }
 
 // 模拟AI分析结果生成
@@ -95,8 +93,11 @@ export default function AssessmentResultStep() {
   };
 
   useEffect(() => {
-    generateAssessmentResults();
-  }, [generateAssessmentResults]);
+    const initResults = async () => {
+      await generateAssessmentResults();
+    };
+    initResults();
+  }, []);
 
   useEffect(() => {
     if (!loading && result) {
