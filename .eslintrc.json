@@ -7,6 +7,9 @@
       "argsIgnorePattern": "^_",
       "varsIgnorePattern": "^_",
       "ignoreRestSiblings": true
+    }],
+    "@typescript-eslint/no-empty-interface": ["error", {
+      "allowSingleExtends": true
     }]
   }
 } 

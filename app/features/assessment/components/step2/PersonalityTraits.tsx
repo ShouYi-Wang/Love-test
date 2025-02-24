@@ -14,6 +14,12 @@ interface Question {
 }
 
 interface FormData extends PersonalityTraits {
+  mbtiResult: {
+    [key: string]: string;
+  };
+  bigFiveResult: {
+    [key: string]: number;
+  };
   emotionalExpression?: string[];
   lifestyle?: {
     schedule?: string;
@@ -110,7 +116,8 @@ export default function PersonalityTraitsStep() {
 
     if (currentSection === 1) {
       mbtiQuestions.forEach(q => {
-        if (!formData.mbtiResult[q.id as keyof typeof formData.mbtiResult]) {
+        const result = formData.mbtiResult[q.id];
+        if (!result) {
           newErrors[q.id] = '请选择一个选项';
         }
       });
