@@ -1,3 +1,13 @@
+interface ErrorContext {
+  [key: string]: string | number | boolean | undefined;
+}
+
+interface ErrorData {
+  message: string;
+  stack?: string;
+  context?: ErrorContext;
+}
+
 interface ErrorReport {
   message: string;
   stack?: string;
@@ -22,7 +32,11 @@ export class ErrorReportingService {
     return this.instance;
   }
 
-  async reportError(error: Error, context?: Record<string, any>) {
+  private async sendError(data: ErrorData): Promise<void> {
+    // ... 实现
+  }
+
+  public async reportError(error: Error, context?: ErrorContext): Promise<void> {
     const report: ErrorReport = {
       message: error.message,
       stack: error.stack,

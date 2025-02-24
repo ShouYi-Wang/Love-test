@@ -19,7 +19,7 @@ export function useAssessmentStorage() {
         console.error('Failed to restore assessment state:', e);
       }
     }
-  }, []);
+  }, [dispatch]);
 
   // 保存状态到localStorage
   useEffect(() => {

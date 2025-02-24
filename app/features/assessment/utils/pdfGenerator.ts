@@ -17,7 +17,7 @@ export async function generatePDF(result: AssessmentResult) {
   doc.text('总体契合度评分', 20, 40);
   doc.setFontSize(14);
   const scoreLevel = Object.entries(SCORE_LEVELS)
-    .find(([_, { min }]) => result.overallScore >= min)?.[1]?.label || SCORE_LEVELS.POOR.label;
+    .find(([, { min }]) => result.overallScore >= min)?.[1]?.label || SCORE_LEVELS.POOR.label;
   doc.text(`${result.overallScore}分 - ${scoreLevel}`, 20, 50);
 
   // 维度分数

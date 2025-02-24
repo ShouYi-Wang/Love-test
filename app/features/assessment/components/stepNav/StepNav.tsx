@@ -8,7 +8,7 @@ const steps = [
 ];
 
 export default function StepNav() {
-  const { state, dispatch } = useAssessment();
+  const { state } = useAssessment();
   const { currentStep, progress } = state;
 
   return (

@@ -33,6 +33,13 @@ interface SelectEvent extends React.ChangeEvent<HTMLSelectElement> {
   };
 }
 
+interface CustomChangeEvent extends React.ChangeEvent<HTMLSelectElement | HTMLInputElement> {
+  target: {
+    name: string;
+    value: string;
+  };
+}
+
 export default function BasicInfoStep() {
   const { state, dispatch } = useAssessment();
   const [formData, setFormData] = useState<Partial<BasicInfo>>(state.formData.basicInfo);
@@ -67,7 +74,7 @@ export default function BasicInfoStep() {
     }
   };
 
-  const handleSelect = (e: SelectEvent) => {
+  const handleChange = (e: CustomChangeEvent) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -167,7 +174,7 @@ export default function BasicInfoStep() {
           <label className="block text-sm font-medium text-gray-700">教育背景</label>
           <select
             value={formData.education || ''}
-            onChange={handleSelect}
+            onChange={handleChange}
             name="education"
             className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
           >

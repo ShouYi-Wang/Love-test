@@ -2,8 +2,8 @@ declare module 'jspdf' {
   interface jsPDFAPI {
     autoTable: (options: {
       startY?: number;
-      head?: any[][];
-      body?: any[][];
+      head?: TableData[][];
+      body?: TableData[][];
       theme?: string;
       finalY?: number;
     }) => { finalY: number };
@@ -58,4 +58,8 @@ interface AutoTableOptions {
   body?: TableRow[][];
   theme?: string;
   finalY?: number;
+}
+
+interface TableData {
+  [key: string]: string | number;
 } 

@@ -20,9 +20,8 @@ interface FormData {
 }
 
 // 模拟AI分析结果生成
-function generateResults(formData: FormData): AssessmentResult {
-  // 这里应该是复杂的AI分析逻辑
-  // 目前使用模拟数据
+function generateResults(): AssessmentResult {
+  // 直接返回模拟数据
   return {
     overallScore: 85,
     dimensionScores: {
@@ -75,7 +74,7 @@ export default function AssessmentResultStep() {
     try {
       setLoading(true);
       clearError();
-      const results = generateResults(state.formData);
+      const results = generateResults();
       setResult(results);
       dispatch({ type: 'SET_RESULTS', payload: results });
       dispatch({
@@ -97,7 +96,7 @@ export default function AssessmentResultStep() {
       await generateAssessmentResults();
     };
     initResults();
-  }, []);
+  }, [generateAssessmentResults]);
 
   useEffect(() => {
     if (!loading && result) {
