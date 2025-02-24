@@ -13,15 +13,12 @@ interface Question {
   }[];
 }
 
-// 定义 MBTI 结果类型
-interface MBTIResult {
-  [key: string]: string;
-}
-
-// 定义表单数据类型
-interface FormData {
-  mbtiResult: MBTIResult;
-  bigFiveResult: Record<string, number>;
+interface FormData extends PersonalityTraits {
+  emotionalExpression?: string[];
+  lifestyle?: {
+    schedule?: string;
+    preferences?: string[];
+  };
 }
 
 // MBTI性格维度题目
@@ -101,7 +98,9 @@ export default function PersonalityTraitsStep() {
   const { state, dispatch } = useAssessment();
   const [formData, setFormData] = useState<FormData>({
     mbtiResult: state.formData.personalityTraits?.mbtiResult || {},
-    bigFiveResult: state.formData.personalityTraits?.bigFiveResult || {}
+    bigFiveResult: state.formData.personalityTraits?.bigFiveResult || {},
+    emotionalExpression: state.formData.personalityTraits?.emotionalExpression,
+    lifestyle: state.formData.personalityTraits?.lifestyle
   });
   const [currentSection, setCurrentSection] = useState(1); // 1: MBTI, 2: 情感表达, 3: 生活习惯
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -111,7 +110,7 @@ export default function PersonalityTraitsStep() {
 
     if (currentSection === 1) {
       mbtiQuestions.forEach(q => {
-        if (!formData.mbtiResult[q.id]) {
+        if (!formData.mbtiResult[q.id as keyof typeof formData.mbtiResult]) {
           newErrors[q.id] = '请选择一个选项';
         }
       });

@@ -12,15 +12,17 @@ const initialState: AssessmentState = {
   currentStep: 1,
   formData: {
     basicInfo: {},
-    personalityTraits: {},
+    personalityTraits: {
+      mbtiResult: {},
+      bigFiveResult: {},
+    },
     partnerPreference: {},
   },
   progress: {
     stepProgress: [0, 0, 0, 0],
     currentStepCompletion: 0,
-    estimatedTimeRemaining: 0,
   },
-  results: {},
+  results: null,
 };
 
 // Action 类型
