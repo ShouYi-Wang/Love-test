@@ -67,11 +67,6 @@ export default function BasicInfoStep() {
     return Object.keys(newErrors).length === 0;
   }, [formData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
   const handleGenderSelect = (value: Gender) => {
     setFormData(prev => ({ ...prev, gender: value }));
   };
@@ -187,19 +182,22 @@ export default function BasicInfoStep() {
         {/* 教育背景 */}
         <div>
           <label className="block text-sm font-medium text-gray-700">教育背景</label>
-          <select
-            value={formData.education || ''}
-            onChange={handleChange}
-            name="education"
-            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-          >
-            <option value="">请选择</option>
+          <div className="mt-2 grid grid-cols-5 gap-3">
             {educationLevels.map((level) => (
-              <option key={level} value={level}>
+              <button
+                key={level}
+                type="button"
+                onClick={() => handleEducationSelect(level as Education)}
+                className={`px-4 py-2 text-sm rounded-md border ${
+                  formData.education === level
+                    ? 'border-primary bg-primary text-white'
+                    : 'border-gray-300 hover:border-primary'
+                }`}
+              >
                 {level}
-              </option>
+              </button>
             ))}
-          </select>
+          </div>
           {errors.education && (
             <p className="mt-1 text-sm text-red-600">{errors.education}</p>
           )}
