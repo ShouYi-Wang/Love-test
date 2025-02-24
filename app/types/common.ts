@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface FooterProps {
   className?: string;
   style?: React.CSSProperties;
@@ -6,7 +8,7 @@ export interface FooterProps {
     social: Array<{
       name: string;
       href: string;
-      icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+      icon: (props: React.SVGProps<SVGSVGElement>) => React.ReactElement;
     }>;
   };
 } 
