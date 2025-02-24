@@ -4,22 +4,31 @@ import { useState } from 'react';
 import { useAssessment } from '../../context/AssessmentContext';
 import { BasicInfo } from '../../types';
 
+type Gender = 'male' | 'female' | 'other';
+type RelationshipStatus = 'single' | 'dating' | 'married';
+type AssessmentPurpose = 'findPartner' | 'evaluateRelation' | 'premaritalAssessment' | 'improveMarriage';
+
 const ageRanges = ['18-24', '25-30', '31-35', '36-40', '40+'] as const;
 const occupations = [
   '技术/IT', '金融/投资', '医疗/健康', '教育/培训',
   '销售/市场', '艺术/设计', '学生', '其他'
 ];
 const educationLevels = ['高中及以下', '大专', '本科', '硕士', '博士'];
+const genderOptions = [
+  { value: 'male' as Gender, label: '男' },
+  { value: 'female' as Gender, label: '女' },
+  { value: 'other' as Gender, label: '其他' }
+];
 const relationshipStatuses = [
-  { value: 'single', label: '单身' },
-  { value: 'dating', label: '恋爱中' },
-  { value: 'married', label: '已婚' }
+  { value: 'single' as RelationshipStatus, label: '单身' },
+  { value: 'dating' as RelationshipStatus, label: '恋爱中' },
+  { value: 'married' as RelationshipStatus, label: '已婚' }
 ];
 const assessmentPurposes = [
-  { value: 'findPartner', label: '寻找潜在伴侣' },
-  { value: 'evaluateRelation', label: '评估当前关系' },
-  { value: 'premaritalAssessment', label: '婚前评估' },
-  { value: 'improveMarriage', label: '婚姻关系改善' }
+  { value: 'findPartner' as AssessmentPurpose, label: '寻找潜在伴侣' },
+  { value: 'evaluateRelation' as AssessmentPurpose, label: '评估当前关系' },
+  { value: 'premaritalAssessment' as AssessmentPurpose, label: '婚前评估' },
+  { value: 'improveMarriage' as AssessmentPurpose, label: '婚姻关系改善' }
 ];
 
 interface FormEvent extends React.FormEvent {
@@ -127,15 +136,11 @@ export default function BasicInfoStep() {
         <div>
           <label className="block text-sm font-medium text-gray-700">性别</label>
           <div className="mt-2 grid grid-cols-3 gap-3">
-            {[
-              { value: 'male', label: '男' },
-              { value: 'female', label: '女' },
-              { value: 'other', label: '其他' }
-            ].map((option) => (
+            {genderOptions.map((option) => (
               <button
                 key={option.value}
                 type="button"
-                onClick={() => setFormData({ ...formData, gender: option.value as any })}
+                onClick={() => setFormData({ ...formData, gender: option.value })}
                 className={`px-4 py-2 text-sm rounded-md border ${
                   formData.gender === option.value
                     ? 'border-primary bg-primary text-white'
@@ -205,7 +210,7 @@ export default function BasicInfoStep() {
               <button
                 key={status.value}
                 type="button"
-                onClick={() => setFormData({ ...formData, relationshipStatus: status.value as any })}
+                onClick={() => setFormData({ ...formData, relationshipStatus: status.value })}
                 className={`px-4 py-2 text-sm rounded-md border ${
                   formData.relationshipStatus === status.value
                     ? 'border-primary bg-primary text-white'
@@ -229,7 +234,7 @@ export default function BasicInfoStep() {
               <button
                 key={purpose.value}
                 type="button"
-                onClick={() => setFormData({ ...formData, assessmentPurpose: purpose.value as any })}
+                onClick={() => setFormData({ ...formData, assessmentPurpose: purpose.value })}
                 className={`px-4 py-2 text-sm rounded-md border ${
                   formData.assessmentPurpose === purpose.value
                     ? 'border-primary bg-primary text-white'
