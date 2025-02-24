@@ -5,10 +5,15 @@ import React from 'react';
 interface NavigationItem {
   name: string;
   href: string;
-  icon: (props: React.SVGProps<SVGSVGElement>) => React.ReactElement;
+  icon?: (props: React.SVGProps<SVGSVGElement>) => React.ReactElement;
 }
 
-const navigation = {
+interface Navigation {
+  main: NavigationItem[];
+  social: Required<NavigationItem>[];
+}
+
+const navigation: Navigation = {
   main: [
     { name: '关于我们', href: '/about' },
     { name: '隐私政策', href: '/privacy' },
@@ -19,7 +24,7 @@ const navigation = {
     {
       name: '微信',
       href: '#',
-      icon: (props) => (
+      icon: (props: React.SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path
             fillRule="evenodd"
@@ -32,7 +37,7 @@ const navigation = {
     {
       name: '微博',
       href: '#',
-      icon: (props) => (
+      icon: (props: React.SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path
             fillRule="evenodd"
