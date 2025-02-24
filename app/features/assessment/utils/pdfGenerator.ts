@@ -1,138 +1,103 @@
-import dynamic from 'next/dynamic';
-import 'jspdf-autotable';
 import { AssessmentResult } from '../types';
+import { jsPDF } from 'jspdf';
 import { DIMENSION_LABELS, SCORE_LEVELS } from '../constants';
 import { addWatermark } from './watermark';
 
-interface AutoTableOptions {
-  startY: number;
-  head: string[][];
-  body: string[][];
-  theme: string;
-}
-
-// 动态导入 jsPDF
-const jsPDF = dynamic(() => import('jspdf').then(mod => mod.jsPDF), {
-  ssr: false
-});
-
 export async function generatePDF(result: AssessmentResult): Promise<jsPDF> {
-  try {
-    const doc = new jsPDF();
-    
-    // 添加错误处理和重试逻辑
-    const maxRetries = 3;
-    let retries = 0;
-    
-    while (retries < maxRetries) {
-      try {
-        await addContent(doc, result);
-        break;
-      } catch (err) {
-        retries++;
-        if (retries === maxRetries) throw err;
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-    }
-    
-    return doc;
-  } catch (err) {
-    console.error('PDF generation failed:', err);
-    throw new Error('生成PDF报告失败，请稍后重试');
-  }
-}
-
-// 分离内容生成逻辑
-async function addContent(doc: jsPDF, result: AssessmentResult): Promise<void> {
-  let currentY = 80;
+  // 创建新的 PDF 文档
+  const doc = new jsPDF();
+  
+  // 设置字体
+  doc.setFont('helvetica');
   
   // 添加标题
   doc.setFontSize(20);
   doc.text('AI情感顾问测评报告', 105, 20, { align: 'center' });
   
-  // 总体评分
+  // 添加总体评分
   doc.setFontSize(16);
   doc.text('总体契合度评分', 20, 40);
   doc.setFontSize(14);
   const scoreLevel = Object.entries(SCORE_LEVELS)
     .find(([, { min }]) => result.overallScore >= min)?.[1]?.label || SCORE_LEVELS.POOR.label;
   doc.text(`${result.overallScore}分 - ${scoreLevel}`, 20, 50);
-
-  // 维度分数
-  doc.setFontSize(16);
-  doc.text('维度详细分析', 20, 70);
-  const dimensionData = Object.entries(result.dimensionScores).map(([key, score]) => [
-    DIMENSION_LABELS[key as keyof typeof DIMENSION_LABELS],
-    `${score}分`
-  ]);
   
-  const table = (doc as unknown as { autoTable: (options: AutoTableOptions) => { finalY: number } })
-    .autoTable({
-      startY: currentY,
-      head: [['维度', '得分']],
-      body: dimensionData,
-      theme: 'grid'
-    });
-  
-  currentY = (table?.finalY || currentY) + 20;
-
-  // 优势领域
+  // 添加维度分析
   doc.setFontSize(16);
-  doc.text('优势领域', 20, currentY);
-  result.strengthAreas.forEach((strength) => {
-    currentY += 10;
-    doc.setFontSize(12);
-    doc.text(`• ${strength}`, 25, currentY);
+  doc.text('维度对比分析', 20, 70);
+  doc.setFontSize(12);
+  let y = 80;
+  Object.entries(result.dimensionScores).forEach(([dimension, score]) => {
+    const label = dimension === 'personality' ? '性格特质' :
+                 dimension === 'lifestyle' ? '生活习惯' :
+                 dimension === 'values' ? '价值观念' :
+                 dimension === 'communication' ? '沟通方式' : '成长意愿';
+    doc.text(`${label}: ${score}分`, 20, y);
+    y += 10;
   });
-
-  currentY += 20;
-
-  // 需要关注
+  
+  // 添加优势领域
   doc.setFontSize(16);
-  doc.text('需要关注', 20, currentY);
-  result.riskAreas.forEach((risk) => {
-    currentY += 10;
-    doc.setFontSize(12);
-    doc.text(`• ${risk}`, 25, currentY);
+  doc.text('优势领域', 20, y + 10);
+  doc.setFontSize(12);
+  y += 20;
+  result.strengthAreas.forEach(strength => {
+    doc.text(`• ${strength}`, 20, y);
+    y += 10;
   });
-
-  // 改善建议
-  doc.addPage();
-  currentY = 20;
+  
+  // 添加需要关注的领域
+  doc.setFontSize(16);
+  doc.text('需要关注', 20, y + 10);
+  doc.setFontSize(12);
+  y += 20;
+  result.riskAreas.forEach(risk => {
+    doc.text(`• ${risk}`, 20, y);
+    y += 10;
+  });
+  
+  // 添加改善建议
+  if (y > 250) {
+    doc.addPage();
+    y = 20;
+  }
   
   doc.setFontSize(16);
-  doc.text('改善建议', 20, currentY);
-
+  doc.text('改善建议', 20, y + 10);
+  doc.setFontSize(12);
+  y += 20;
+  
   // 短期建议
-  currentY += 15;
-  doc.setFontSize(14);
-  doc.text('短期行动计划:', 20, currentY);
-  result.recommendations.shortTerm.forEach((item) => {
-    currentY += 10;
-    doc.setFontSize(12);
-    doc.text(`• ${item}`, 25, currentY);
+  doc.text('短期行动计划:', 20, y);
+  y += 10;
+  result.recommendations.shortTerm.forEach(item => {
+    doc.text(`• ${item}`, 25, y);
+    y += 10;
   });
-
+  
   // 长期建议
-  currentY += 20;
-  doc.setFontSize(14);
-  doc.text('长期发展建议:', 20, currentY);
-  result.recommendations.longTerm.forEach((item) => {
-    currentY += 10;
-    doc.setFontSize(12);
-    doc.text(`• ${item}`, 25, currentY);
+  y += 5;
+  doc.text('长期发展建议:', 20, y);
+  y += 10;
+  result.recommendations.longTerm.forEach(item => {
+    doc.text(`• ${item}`, 25, y);
+    y += 10;
   });
-
+  
   // 具体步骤
-  currentY += 20;
-  doc.setFontSize(14);
-  doc.text('具体实践步骤:', 20, currentY);
-  result.recommendations.practicalSteps.forEach((item) => {
-    currentY += 10;
-    doc.setFontSize(12);
-    doc.text(`• ${item}`, 25, currentY);
+  if (y > 250) {
+    doc.addPage();
+    y = 20;
+  }
+  
+  y += 5;
+  doc.text('具体实践步骤:', 20, y);
+  y += 10;
+  result.recommendations.practicalSteps.forEach(item => {
+    doc.text(`• ${item}`, 25, y);
+    y += 10;
   });
-
+  
   // 添加页脚
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
@@ -141,11 +106,13 @@ async function addContent(doc: jsPDF, result: AssessmentResult): Promise<void> {
     doc.text(
       `第 ${i} 页 / 共 ${pageCount} 页`,
       105,
-      doc.internal.pageSize.height - 10,
+      290,
       { align: 'center' }
     );
   }
-
+  
   // 添加水印
   addWatermark(doc);
+  
+  return doc;
 } 
