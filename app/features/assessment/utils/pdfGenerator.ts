@@ -1,6 +1,5 @@
 import { AssessmentResult } from '../types';
 import { jsPDF } from 'jspdf';
-import { DIMENSION_LABELS, SCORE_LEVELS } from '../constants';
 import { addWatermark } from './watermark';
 
 export async function generatePDF(result: AssessmentResult): Promise<jsPDF> {
@@ -18,8 +17,12 @@ export async function generatePDF(result: AssessmentResult): Promise<jsPDF> {
   doc.setFontSize(16);
   doc.text('总体契合度评分', 20, 40);
   doc.setFontSize(14);
-  const scoreLevel = Object.entries(SCORE_LEVELS)
-    .find(([, { min }]) => result.overallScore >= min)?.[1]?.label || SCORE_LEVELS.POOR.label;
+  
+  // 根据分数确定评级
+  const scoreLevel = result.overallScore >= 85 ? '非常契合' :
+                    result.overallScore >= 70 ? '比较契合' :
+                    result.overallScore >= 60 ? '基本契合' : '需要努力';
+  
   doc.text(`${result.overallScore}分 - ${scoreLevel}`, 20, 50);
   
   // 添加维度分析
