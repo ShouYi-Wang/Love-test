@@ -7,11 +7,6 @@ export function loadPolyfills(): void {
 
   // 动态导入 polyfills
   const loadDynamicPolyfills = async () => {
-    // 检查 IntersectionObserver 支持
-    if (!window.IntersectionObserver) {
-      await import('intersection-observer');
-    }
-
     // 检查 fetch 支持
     if (!window.fetch) {
       await import('whatwg-fetch');
