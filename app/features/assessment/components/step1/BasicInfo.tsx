@@ -26,11 +26,16 @@ interface FormEvent extends React.FormEvent {
   target: HTMLFormElement;
 }
 
-interface ButtonClickEvent {
-  currentTarget: {
+interface ChangeEvent extends React.ChangeEvent<HTMLSelectElement | HTMLInputElement> {
+  target: {
     name: string;
     value: string;
   };
+}
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  selected?: boolean;
+  children: React.ReactNode;
 }
 
 export default function BasicInfoStep() {
@@ -52,6 +57,11 @@ export default function BasicInfoStep() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleChange = (e: ChangeEvent) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
@@ -67,10 +77,19 @@ export default function BasicInfoStep() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const SelectButton = ({ selected, children, ...props }: ButtonProps) => (
+    <button
+      type="button"
+      className={`px-4 py-2 text-sm rounded-md border ${
+        selected
+          ? 'border-primary bg-primary text-white'
+          : 'border-gray-300 hover:border-primary'
+      }`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
 
   return (
     <div className="space-y-6">
@@ -137,9 +156,9 @@ export default function BasicInfoStep() {
           <label className="block text-sm font-medium text-gray-700">职业领域 (可多选)</label>
           <div className="mt-2 grid grid-cols-4 gap-3">
             {occupations.map((occupation) => (
-              <button
+              <SelectButton
                 key={occupation}
-                type="button"
+                selected={formData.occupation?.includes(occupation)}
                 onClick={() => {
                   const current = formData.occupation || [];
                   const updated = current.includes(occupation)
@@ -147,14 +166,9 @@ export default function BasicInfoStep() {
                     : [...current, occupation];
                   setFormData({ ...formData, occupation: updated });
                 }}
-                className={`px-4 py-2 text-sm rounded-md border ${
-                  formData.occupation?.includes(occupation)
-                    ? 'border-primary bg-primary text-white'
-                    : 'border-gray-300 hover:border-primary'
-                }`}
               >
                 {occupation}
-              </button>
+              </SelectButton>
             ))}
           </div>
           {errors.occupation && (
