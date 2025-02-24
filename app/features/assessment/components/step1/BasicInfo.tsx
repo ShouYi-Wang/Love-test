@@ -127,7 +127,7 @@ export default function BasicInfoStep() {
               <button
                 key={option.value}
                 type="button"
-                onClick={() => setFormData({ ...formData, gender: option.value })}
+                onClick={() => setFormData(prev => ({ ...prev, gender: option.value }))}
                 className={`px-4 py-2 text-sm rounded-md border ${
                   formData.gender === option.value
                     ? 'border-primary bg-primary text-white'
