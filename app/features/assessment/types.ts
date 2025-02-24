@@ -22,7 +22,26 @@ export interface BasicInfo {
 }
 
 export interface PartnerPreference {
-  // ... 其他字段
+  idealTraits: {
+    personality: string[];
+    lifestyle: string[];
+    values: string[];
+  };
+  relationshipExpectation: {
+    commitment: number;
+    futurePlanning: string[];
+    growthMindset: number;
+  };
+  acceptanceLevel: {
+    toleranceScore: number;
+    conflictResolution: string[];
+    compromiseWillingness: number;
+  };
+  priorities: {
+    dimensionWeights: Record<string, number>;
+    coreRequirements: string[];
+    flexibilityLevel: number;
+  };
 }
 
 export interface AssessmentResult {
@@ -41,4 +60,18 @@ export interface AssessmentResult {
     longTerm: string[];
     practicalSteps: string[];
   };
+}
+
+export interface AssessmentState {
+  currentStep: number;
+  formData: {
+    basicInfo: Partial<BasicInfo>;
+    personalityTraits: Partial<PersonalityTraits>;
+    partnerPreference: Partial<PartnerPreference>;
+  };
+  progress: {
+    stepProgress: number[];
+    currentStepCompletion: number;
+  };
+  results: AssessmentResult | null;
 } 
